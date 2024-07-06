@@ -25,9 +25,9 @@ document.addEventListener("DOMContentLoaded", function () {
     html5QrCode.start(
       { facingMode: "environment" }, // Use rear camera
       {
-        fps: 10, // Optional, frames per second for qr code scanning
+        fps: 30, // Optional, frames per second for qr code scanning
         qrbox: { width: 250, height: 250 }, // Optional, if you want bounded box UI
-        aspectRatio: 0.8, // Optional, adjust aspect ratio for better detection
+        aspectRatio: 0.9, // Optional, adjust aspect ratio for better detection
         delay: 150, // Optional, delay in milliseconds between each scan attempt
         disableFlip: false // Optional, disable flipping of the video feed
       },

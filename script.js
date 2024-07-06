@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", function () {
     html5QrCode.start(
       { facingMode: "environment" }, // Use rear camera
       {
-        fps: 10, // Optional, frames per second for qr code scanning
+        fps: 50, // Optional, frames per second for qr code scanning
         qrbox: { width: 250, height: 250 } // Optional, if you want bounded box UI
       },
       qrCodeMessage => {

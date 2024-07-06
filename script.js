@@ -22,20 +22,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function openCamera() {
     cameraContainer.style.display = 'block'; // Show the camera container
+    closeCameraBtn.style.display = 'block'; // Show the close camera button
+    openCameraBtn.style.display = 'none'; // Hide the open camera button
+
     html5QrCode.start(
       { facingMode: "environment" }, // Use rear camera
       {
-        fps: 30, // Optional, frames per second for qr code scanning
-        qrbox: { width: 250, height: 250 }, // Optional, if you want bounded box UI
-        aspectRatio: 0.9, // Optional, adjust aspect ratio for better detection
-        delay: 150, // Optional, delay in milliseconds between each scan attempt
-        disableFlip: false // Optional, disable flipping of the video feed
+        fps: 10, // Optional, frames per second for qr code scanning
+        qrbox: { width: 250, height: 250 } // Optional, if you want bounded box UI
       },
       qrCodeMessage => {
         alert('Scanned: ' + qrCodeMessage);
         // Here you can handle the scanned content, such as generating a QR code or barcode
         html5QrCode.stop().then(ignore => {
           cameraContainer.style.display = 'none'; // Hide the camera container
+          closeCameraBtn.style.display = 'none'; // Hide the close camera button
+          openCameraBtn.style.display = 'block'; // Show the open camera button
         }).catch(err => {
           console.error('Failed to stop camera:', err);
         });
@@ -51,6 +53,8 @@ document.addEventListener("DOMContentLoaded", function () {
   function closeCamera() {
     html5QrCode.stop().then(ignore => {
       cameraContainer.style.display = 'none'; // Hide the camera container
+      closeCameraBtn.style.display = 'none'; // Hide the close camera button
+      openCameraBtn.style.display = 'block'; // Show the open camera button
     }).catch(err => {
       console.error('Failed to stop camera:', err);
     });
@@ -136,3 +140,6 @@ document.addEventListener("DOMContentLoaded", function () {
     // Not needed for vertical display, can be implemented if required
   }
 });
+</script>
+</body>
+</html>

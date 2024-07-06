@@ -1,78 +1,78 @@
 body {
-  font-family: Arial, sans-serif;
-  background-color: #f0f0f0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  margin: 0;
+  font-family: Arial, sans-serif; /* نوع الخط للنصوص */
+  background-color: #f0f0f0; /* لون خلفية الصفحة */
+  display: flex; /* استخدام flexbox لتنظيم التصميم */
+  justify-content: center; /* توسيط المحتوى عموديا */
+  align-items: center; /* توسيط المحتوى أفقيا */
+  height: 100vh; /* امتداد الجسم ليغطي ارتفاع الشاشة بالكامل */
+  margin: 0; /* إزالة هوامش الصفحة */
 }
 
 .container {
-  max-width: 600px;
-  padding: 20px;
-  background-color: #fff;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  border-radius: 5px;
+  max-width: 600px; /* الحد الأقصى لعرض العنصر */
+  padding: 20px; /* تباعد الحواف الداخلية للعنصر */
+  background-color: #fff; /* لون خلفية الحاوية */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* ظل للحاوية */
+  border-radius: 5px; /* تدوير الزوايا للحاوية */
 }
 
 .title {
-  text-align: center;
-  margin-bottom: 20px;
+  text-align: center; /* توسيط النص داخل العنصر */
+  margin-bottom: 20px; /* تباعد من الأسفل */
 }
 
 .qr-container {
-  text-align: center;
-  margin-bottom: 20px;
-  position: relative;
+  text-align: center; /* توسيط النص داخل العنصر */
+  margin-bottom: 20px; /* تباعد من الأسفل */
+  position: relative; /* وضع موقعي نسبي ليتمكن من التحكم في المراكز المطلقة */
 }
 
 .qr-code {
-  width: 3cm;
-  height: 3cm;
-  margin: 0 auto;
-  display: block;
+  width: 3cm; /* عرض الرمز الشريطي */
+  height: 3cm; /* ارتفاع الرمز الشريطي */
+  margin: 0 auto; /* توسيط الرمز الشريطي */
+  display: block; /* عرض الرمز الشريطي كمربع مستقل */
 }
 
 .qr-code-image {
-  width: 100%;
-  height: 100%;
+  width: 100%; /* عرض الصورة داخل الرمز الشريطي */
+  height: 100%; /* ارتفاع الصورة داخل الرمز الشريطي */
 }
 
 .item-name {
-  margin-top: -10px;
-  font-size: 10px;
+  margin-top: -10px; /* تعديل التباعد للنص أعلى الرمز الشريطي */
+  font-size: 10px; /* حجم الخط لاسم العنصر */
 }
 
 .btn {
-  display: block;
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
-  background-color: #4caf50;
-  color: #fff;
-  border: none;
-  border-radius: 3px;
-  cursor: pointer;
+  display: block; /* عرض الزر كمربع مستقل */
+  width: 100%; /* عرض الزر بالكامل */
+  padding: 10px; /* هامش داخلي للزر */
+  margin-bottom: 10px; /* تباعد من الأسفل */
+  background-color: #4caf50; /* لون خلفية الزر */
+  color: #fff; /* لون النص */
+  border: none; /* إزالة حدود الزر */
+  border-radius: 3px; /* تدوير الزوايا للزر */
+  cursor: pointer; /* تغيير المؤشر عند التحويم ليدل على أنه زر قابل للنقر */
 }
 
 .btn:hover {
-  background-color: #45a049;
+  background-color: #45a049; /* تغيير لون خلفية الزر عند التحويم */
 }
 
 .input {
-  width: calc(100% - 20px);
-  padding: 10px;
-  margin-bottom: 10px;
-  border: 1px solid #ccc;
-  border-radius: 3px;
+  width: calc(100% - 20px); /* عرض حقل الإدخال مع تحسين للهوامش */
+  padding: 10px; /* هامش داخلي لحقل الإدخال */
+  margin-bottom: 10px; /* تباعد من الأسفل */
+  border: 1px solid #ccc; /* حدود لحقل الإدخال */
+  border-radius: 3px; /* تدوير الزوايا لحقل الإدخال */
 }
 
 input[type="file"] {
-  margin-top: 3px;
+  margin-top: 3px; /* تعديل التباعد لحقل الإدخال من نوع الملفات */
 }
 
 label {
-  display: block;
-  margin-top: 10px;
+  display: block; /* عرض العنصر كمربع مستقل */
+  margin-top: 10px; /* تباعد من الأعلى */
 }

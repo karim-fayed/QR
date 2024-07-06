@@ -3,259 +3,28 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QR Code Scanner</title>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-  }
-
-  .container {
-    max-width: 600px;
-    padding: 20px;
-    background-color: #fff;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    border-radius: 5px;
-  }
-
-  .title {
-    text-align: center;
-    margin-bottom: 20px;
-  }
-
-  .qr-container {
-    text-align: center;
-    margin-bottom: 20px;
-    position: relative;
-  }
-
-  .qr-code {
-    width: 3cm;
-    height: 3cm;
-    margin: 0 auto;
-    display: block;
-  }
-
-  .qr-code-image {
-    width: 100%;
-    height: 100%;
-  }
-
-  .item-name {
-    margin-top: -10px;
-    font-size: 10px;
-  }
-
-  .btn {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
-    background-color: #4caf50;
-    color: #fff;
-    border: none;
-    border-radius: 3px;
-    cursor: pointer;
-  }
-
-  .btn:hover {
-    background-color: #45a049;
-  }
-
-  .input {
-    width: calc(100% - 20px);
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 3px;
-  }
-
-  input[type="file"] {
-    margin-top: 3px;
-  }
-
-  label {
-    display: block;
-    margin-top: 10px;
-  }
-
-  #camera-container {
-    display: none; /* Initially hide camera container */
-  }
-</style>
+<title>QR Generator for Excel</title>
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
-<div class="container">
-  <h2 class="title">QR Code Scanner</h2>
-  
+<div id="qr-code-container" class="container">
+  <h1 class="title">QR Generator for Excel</h1>
   <div class="qr-container">
     <div id="qr-code" class="qr-code"></div>
     <div id="item-name" class="item-name"></div>
   </div>
-
-  <input type="file" id="excel-file" class="input" accept=".xls,.xlsx">
-  <button id="generate-btn" class="btn">Generate QR Codes</button>
-
+  <label for="excel-file">Choose Excel File:</label>
+  <input type="file" id="excel-file" accept=".xlsx">
+  <button id="generate-btn" class="btn">Generate QR Code</button>
+  <button id="print-btn" class="btn">Print QR Code</button>
+  <button id="save-btn" class="btn">Save QR Code</button>
   <button id="open-camera-btn" class="btn">Open Camera</button>
-  <button id="close-camera-btn" class="btn" style="display: none;">Close Camera</button>
-
-  <div id="camera-container">
-    <video id="reader"></video>
+  <button id="close-camera-btn" class="btn">Close Camera</button>
+  <div id="camera-container" style="display: none;">
+    <div id="reader"></div>
   </div>
 </div>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js" integrity="sha512-r6rDA7W6ZeQhvl8S7yRVQUKVHdexq+GAlNkNNqVC7YyIV+NwqCTJe2hDWCiffTyRNOeGEzRRJ9ifvRm/HCzGYg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-  const generateBtn = document.getElementById("generate-btn");
-  const printBtn = document.getElementById("print-btn");
-  const saveBtn = document.getElementById("save-btn");
-  const qrCodeDiv = document.getElementById("qr-code");
-  const itemNameDiv = document.getElementById("item-name");
-  const excelFileInput = document.getElementById("excel-file");
-  const openCameraBtn = document.getElementById("open-camera-btn");
-  const closeCameraBtn = document.getElementById("close-camera-btn");
-  const cameraContainer = document.getElementById('camera-container');
-  let workbook; // Declare workbook variable outside
-  let html5QrCode;
-
-  generateBtn.addEventListener("click", generateQRCode);
-  printBtn.addEventListener("click", printQRCode);
-  saveBtn.addEventListener("click", saveQRCode);
-  openCameraBtn.addEventListener('click', openCamera);
-  closeCameraBtn.addEventListener('click', closeCamera);
-
-  // Initialize HTML5 QR Code Scanner
-  html5QrCode = new Html5Qrcode("reader");
-
-  function openCamera() {
-    cameraContainer.style.display = 'block'; // Show the camera container
-    closeCameraBtn.style.display = 'block'; // Show the close camera button
-    openCameraBtn.style.display = 'none'; // Hide the open camera button
-
-    html5QrCode.start(
-      { facingMode: "environment" }, // Use rear camera
-      {
-        fps: 10, // Optional, frames per second for qr code scanning
-        qrbox: { width: 250, height: 250 } // Optional, if you want bounded box UI
-      },
-      qrCodeMessage => {
-        alert('Scanned: ' + qrCodeMessage);
-        // Here you can handle the scanned content, such as generating a QR code or barcode
-        html5QrCode.stop().then(ignore => {
-          cameraContainer.style.display = 'none'; // Hide the camera container
-          closeCameraBtn.style.display = 'none'; // Hide the close camera button
-          openCameraBtn.style.display = 'block'; // Show the open camera button
-        }).catch(err => {
-          console.error('Failed to stop camera:', err);
-        });
-      },
-      errorMessage => {
-        console.warn(`QR Code no longer in front of camera.`);
-      }
-    ).catch(err => {
-      console.error('Unable to start scanning:', err);
-    });
-  }
-
-  function closeCamera() {
-    html5QrCode.stop().then(ignore => {
-      cameraContainer.style.display = 'none'; // Hide the camera container
-      closeCameraBtn.style.display = 'none'; // Hide the close camera button
-      openCameraBtn.style.display = 'block'; // Show the open camera button
-    }).catch(err => {
-      console.error('Failed to stop camera:', err);
-    });
-  }
-
-  function generateQRCode() {
-    const file = excelFileInput.files[0];
-    if (!file) {
-      alert("Please select an Excel file.");
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = function (e) {
-      const data = new Uint8Array(e.target.result);
-      workbook = XLSX.read(data, { type: "array" });
-      const firstSheetName = workbook.SheetNames[0];
-      const worksheet = workbook.Sheets[firstSheetName];
-      const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-
-      // Clear previous QR code and item name
-      qrCodeDiv.innerHTML = "";
-      itemNameDiv.textContent = "";
-
-      // Prepare HTML content for displaying QR codes vertically
-      let qrCodesHTML = "";
-
-      // Loop through each row (starting from A2) to generate QR codes
-      for (let i = 1; i < jsonData.length; i++) {
-        const itemName = jsonData[i][0];
-        const dataValue = jsonData[i][3]; // Assuming data is in column D
-
-        if (!itemName || !dataValue) {
-          continue; // Skip rows with missing data
-        }
-
-        const qrCodeImageSrc = `https://quickchart.io/qr?text=${encodeURIComponent(dataValue)}`;
-
-        qrCodesHTML += `
-          <div class="qr-code-container">
-            <div class="qr-code">
-              <img src="${qrCodeImageSrc}" alt="QR Code">
-            </div>
-            <div class="item-name">${itemName}</div>
-          </div>
-        `;
-      }
-
-      // Display generated QR codes vertically
-      qrCodeDiv.innerHTML = qrCodesHTML;
-
-      // Open a new window/tab to display QR codes vertically
-      const qrWindow = window.open("", "_blank");
-      qrWindow.document.write(`
-        <html>
-        <head>
-          <title>Generated QR Codes</title>
-          <style>
-            body { font-family: Arial, sans-serif; margin: 20px; }
-            .qr-code-container { margin-bottom: 20px; }
-            .qr-code { width: 150px; height: 150px; margin: 0 auto; }
-            .item-name { text-align: center; margin-top: -10px; font-size: 10px; font-weight: bold; }
-          </style>
-        </head>
-        <body>
-          <h1 style="text-align: center;"></h1>
-          <div class="qr-codes-container">
-            ${qrCodesHTML}
-          </div>
-        </body>
-        </html>
-      `);
-      qrWindow.document.close();
-    };
-    reader.readAsArrayBuffer(file);
-  }
-
-  function printQRCode() {
-    // Not needed for vertical display, can be implemented if required
-  }
-
-  function saveQRCode() {
-    // Not needed for vertical display, can be implemented if required
-  }
-});
-</script>
-
+<script src="script.js"></script>
 </body>
 </html>

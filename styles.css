@@ -76,3 +76,6 @@ label {
   display: block; /* عرض العنصر كمربع مستقل */
   margin-top: 10px; /* تباعد من الأعلى */
 }
+  #camera-container {
+    display: none; /* Initially hide camera container */
+  }

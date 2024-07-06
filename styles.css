@@ -76,7 +76,3 @@ label {
   display: block;
   margin-top: 10px;
 }
-
-#camera-container {
-  display: none; /* Initially hide camera container */
-}

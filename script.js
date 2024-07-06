@@ -6,24 +6,17 @@ document.addEventListener("DOMContentLoaded", function () {
   const itemNameDiv = document.getElementById("item-name");
   const excelFileInput = document.getElementById("excel-file");
   const openCameraBtn = document.getElementById("open-camera-btn");
-  const closeCameraBtn = document.getElementById("close-camera-btn");
   const cameraContainer = document.getElementById('camera-container');
   let workbook; // Declare workbook variable outside
-  let html5QrCode;
 
   generateBtn.addEventListener("click", generateQRCode);
   printBtn.addEventListener("click", printQRCode);
   saveBtn.addEventListener("click", saveQRCode);
-  openCameraBtn.addEventListener('click', openCamera);
-  closeCameraBtn.addEventListener('click', closeCamera);
 
-  // Initialize HTML5 QR Code Scanner
-  html5QrCode = new Html5Qrcode("reader");
-
-  function openCamera() {
+  // Event listener for Open Camera button
+  openCameraBtn.addEventListener('click', function () {
     cameraContainer.style.display = 'block'; // Show the camera container
-    closeCameraBtn.style.display = 'block'; // Show the close camera button
-    openCameraBtn.style.display = 'none'; // Hide the open camera button
+    const html5QrCode = new Html5Qrcode("reader");
 
     html5QrCode.start(
       { facingMode: "environment" }, // Use rear camera
@@ -36,8 +29,6 @@ document.addEventListener("DOMContentLoaded", function () {
         // Here you can handle the scanned content, such as generating a QR code or barcode
         html5QrCode.stop().then(ignore => {
           cameraContainer.style.display = 'none'; // Hide the camera container
-          closeCameraBtn.style.display = 'none'; // Hide the close camera button
-          openCameraBtn.style.display = 'block'; // Show the open camera button
         }).catch(err => {
           console.error('Failed to stop camera:', err);
         });
@@ -48,17 +39,7 @@ document.addEventListener("DOMContentLoaded", function () {
     ).catch(err => {
       console.error('Unable to start scanning:', err);
     });
-  }
-
-  function closeCamera() {
-    html5QrCode.stop().then(ignore => {
-      cameraContainer.style.display = 'none'; // Hide the camera container
-      closeCameraBtn.style.display = 'none'; // Hide the close camera button
-      openCameraBtn.style.display = 'block'; // Show the open camera button
-    }).catch(err => {
-      console.error('Failed to stop camera:', err);
-    });
-  }
+  });
 
   function generateQRCode() {
     const file = excelFileInput.files[0];
@@ -103,9 +84,6 @@ document.addEventListener("DOMContentLoaded", function () {
         `;
       }
 
-      // Display generated QR codes vertically
-      qrCodeDiv.innerHTML = qrCodesHTML;
-
       // Open a new window/tab to display QR codes vertically
       const qrWindow = window.open("", "_blank");
       qrWindow.document.write(`
@@ -140,6 +118,3 @@ document.addEventListener("DOMContentLoaded", function () {
     // Not needed for vertical display, can be implemented if required
   }
 });
-</script>
-</body>
-</html>

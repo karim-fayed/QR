@@ -1,0 +1,78 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f0f0f0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+
+.container {
+  max-width: 600px;
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.qr-container {
+  text-align: center;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.qr-code {
+  width: 3cm;
+  height: 3cm;
+  margin: 0 auto;
+  display: block;
+}
+
+.qr-code-image {
+  width: 100%;
+  height: 100%;
+}
+
+.item-name {
+  margin-top: -10px;
+  font-size: 10px;
+}
+
+.btn {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  background-color: #4caf50;
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background-color: #45a049;
+}
+
+.input {
+  width: calc(100% - 20px);
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+}
+
+input[type="file"] {
+  margin-top: 3px;
+}
+
+label {
+  display: block;
+  margin-top: 10px;
+}

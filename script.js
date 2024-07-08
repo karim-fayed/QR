@@ -12,9 +12,10 @@ document.addEventListener("DOMContentLoaded", function () {
   generateBtn.addEventListener("click", generateQRCode);
   printBtn.addEventListener("click", printQRCode);
   saveBtn.addEventListener("click", saveQRCode);
-
+  openCameraBtn.addEventListener('click', openCamera);
+  
   // Event listener for Open Camera button
-  openCameraBtn.addEventListener('click', function () {
+  function openCamera() {
     cameraContainer.style.display = 'block'; // Show the camera container
     const html5QrCode = new Html5Qrcode("reader");
 
@@ -23,10 +24,11 @@ document.addEventListener("DOMContentLoaded", function () {
       {
         fps: 90, // Optional, frames per second for qr code scanning
         qrbox: { width: 300, height: 300 } // Optional, if you want bounded box UI
+        zoom: 2 // Zoom factor to zoom in on the camera view
       },
       qrCodeMessage => {
-        alert('Scanned: ' + qrCodeMessage);
-             navigator.vibrate(200); // Vibrate for 200 milliseconds
+        navigator.vibrate(200); // Vibrate for 200 milliseconds
+        alert('Scanned: ' + qrCodeMessage);   
         // Here you can handle the scanned content, such as generating a QR code or barcode
         html5QrCode.stop().then(ignore => {
           cameraContainer.style.display = 'none'; // Hide the camera container

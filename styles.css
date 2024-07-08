@@ -14,7 +14,7 @@ body {
   background-color: #fff;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   border-radius: 5px;
-  transform: translateY(-50px);
+  transform: translateY(-80px);
 }
 
 .title {

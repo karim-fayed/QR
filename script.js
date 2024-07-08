@@ -27,10 +27,10 @@ document.addEventListener("DOMContentLoaded", function () {
         fps: 90, // Optional, frames per second for qr code scanning
         qrbox: { width: 300, height: 300 }, // Optional, if you want bounded box UI
         aspectRatio: 1 // Set aspect ratio to 1 for zoom effect (width equals height)
-        navigator.vibrate(200); // Vibrate for 200 milliseconds
+        
       },
       qrCodeMessage => {
-        
+        navigator.vibrate(400); // Vibrate for 200 milliseconds
         alert('Scanned: ' + qrCodeMessage);
         // Here you can handle the scanned content, such as generating a QR code or barcode
         html5QrCode.stop().then(ignore => {

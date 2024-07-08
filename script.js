@@ -1,7 +1,125 @@
-document.addEventListener("DOMContentLoaded", function() {
-  const vibrateBtn = document.getElementById("vibrate-btn");
+document.addEventListener("DOMContentLoaded", function () {
+  const generateBtn = document.getElementById("generate-btn");
+  const printBtn = document.getElementById("print-btn");
+  const saveBtn = document.getElementById("save-btn");
+  const qrCodeDiv = document.getElementById("qr-code");
+  const itemNameDiv = document.getElementById("item-name");
+  const excelFileInput = document.getElementById("excel-file");
+  const openCameraBtn = document.getElementById("open-camera-btn");
+  const cameraContainer = document.getElementById('camera-container');
+  let workbook; // Declare workbook variable outside
+  let html5QrCode;
 
-  vibrateBtn.addEventListener("click", function() {
-    navigator.vibrate(200); // Test vibration for 200 milliseconds
-  });
+  generateBtn.addEventListener("click", generateQRCode);
+  printBtn.addEventListener("click", printQRCode);
+  saveBtn.addEventListener("click", saveQRCode);
+  openCameraBtn.addEventListener('click', openCamera);
+
+  function openCamera() {
+    cameraContainer.style.display = 'block'; // Show the camera container
+
+    // Initialize HTML5 QR Code Scanner
+    html5QrCode = new Html5Qrcode("reader");
+
+    html5QrCode.start(
+      { facingMode: "environment" }, // Use rear camera
+      {
+        fps: 90, // Optional, frames per second for qr code scanning
+        qrbox: { width: 300, height: 300 }, // Optional, if you want bounded box UI
+        aspectRatio: 1 // Set aspect ratio to 1 for zoom effect (width equals height)
+      },
+      qrCodeMessage => {
+        navigator.vibrate(200); // Vibrate for 200 milliseconds
+        alert('Scanned: ' + qrCodeMessage);
+        // Here you can handle the scanned content, such as generating a QR code or barcode
+        html5QrCode.stop().then(ignore => {
+          cameraContainer.style.display = 'none'; // Hide the camera container
+        }).catch(err => {
+          console.error('Failed to stop camera:', err);
+        });
+      },
+      errorMessage => {
+        console.warn(`QR Code no longer in front of camera.`);
+      }
+    ).catch(err => {
+      console.error('Unable to start scanning:', err);
+    });
+  }
+
+  function generateQRCode() {
+    const file = excelFileInput.files[0];
+    if (!file) {
+      alert("Please select an Excel file.");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      const data = new Uint8Array(e.target.result);
+      workbook = XLSX.read(data, { type: "array" });
+      const firstSheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[firstSheetName];
+      const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+      // Clear previous QR code and item name
+      qrCodeDiv.innerHTML = "";
+      itemNameDiv.textContent = "";
+
+      // Prepare HTML content for displaying QR codes vertically
+      let qrCodesHTML = "";
+
+      // Loop through each row (starting from A2) to generate QR codes
+      for (let i = 1; i < jsonData.length; i++) {
+        const itemName = jsonData[i][0];
+        const dataValue = jsonData[i][3]; // Assuming data is in column D
+
+        if (!itemName || !dataValue) {
+          continue; // Skip rows with missing data
+        }
+
+        const qrCodeImageSrc = `https://quickchart.io/qr?text=${encodeURIComponent(dataValue)}`;
+
+        qrCodesHTML += `
+          <div class="qr-code-container">
+            <div class="qr-code">
+              <img src="${qrCodeImageSrc}" alt="QR Code">
+            </div>
+            <div class="item-name">${itemName}</div>
+          </div>
+        `;
+      }
+
+      // Open a new window/tab to display QR codes vertically
+      const qrWindow = window.open("", "_blank");
+      qrWindow.document.write(`
+        <html>
+        <head>
+          <title>Generated QR Codes</title>
+          <style>
+            body { font-family: Arial, sans-serif; margin: 20px; }
+            .qr-code-container { margin-bottom: 20px; }
+            .qr-code { width: 150px; height: 150px; margin: 0 auto; }
+            .item-name { text-align: center; margin-top: -10px; font-size: 10px; font-weight: bold; }
+          </style>
+        </head>
+        <body>
+          <h1 style="text-align: center;"></h1>
+          <div class="qr-codes-container">
+            ${qrCodesHTML}
+          </div>
+        </body>
+        </html>
+      `);
+      qrWindow.document.close();
+    };
+    reader.readAsArrayBuffer(file);
+  }
+
+  function printQRCode() {
+    // Not needed for vertical display, can be implemented if required
+  }
+
+  function saveQRCode() {
+    // Not needed for vertical display, can be implemented if required
+  }
 });

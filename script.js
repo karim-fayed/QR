@@ -49,12 +49,14 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function closeCamera() {
-    html5QrCode.stop().then(ignore => {
-      cameraContainer.style.display = 'none'; // Hide the camera container
-      closeCameraBtn.style.display = 'none'; // Hide the close camera button
-    }).catch(err => {
-      console.error('Failed to stop camera:', err);
-    });
+    if (html5QrCode) {
+      html5QrCode.stop().then(ignore => {
+        cameraContainer.style.display = 'none'; // Hide the camera container
+        closeCameraBtn.style.display = 'none'; // Hide the close camera button
+      }).catch(err => {
+        console.error('Failed to stop camera:', err);
+      });
+    }
   }
 
   function generateQRCode() {

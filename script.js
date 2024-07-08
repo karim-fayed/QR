@@ -6,29 +6,36 @@ document.addEventListener("DOMContentLoaded", function () {
   const itemNameDiv = document.getElementById("item-name");
   const excelFileInput = document.getElementById("excel-file");
   const openCameraBtn = document.getElementById("open-camera-btn");
+  const closeCameraBtn = document.getElementById("close-camera-btn");
   const cameraContainer = document.getElementById('camera-container');
   let workbook; // Declare workbook variable outside
+  let html5QrCode;
 
   generateBtn.addEventListener("click", generateQRCode);
   printBtn.addEventListener("click", printQRCode);
   saveBtn.addEventListener("click", saveQRCode);
+  openCameraBtn.addEventListener('click', openCamera);
+  closeCameraBtn.addEventListener('click', closeCamera);
 
-  // Event listener for Open Camera button
-  openCameraBtn.addEventListener('click', function () {
+  // Initialize HTML5 QR Code Scanner
+  html5QrCode = new Html5Qrcode("reader");
+
+  function openCamera() {
     cameraContainer.style.display = 'block'; // Show the camera container
-    const html5QrCode = new Html5Qrcode("reader");
-
+    closeCameraBtn.style.display = 'block'; // Show the close camera button
     html5QrCode.start(
       { facingMode: "environment" }, // Use rear camera
       {
-        fps: 90, // Optional, frames per second for qr code scanning
-        qrbox: { width: 300, height: 300 } // Optional, if you want bounded box UI
+        fps: 50, // Optional, frames per second for qr code scanning
+        qrbox: { width: 250, height: 250 } // Optional, if you want bounded box UI
       },
       qrCodeMessage => {
         alert('Scanned: ' + qrCodeMessage);
+        navigator.vibrate(200); // Vibrate for 200 milliseconds
         // Here you can handle the scanned content, such as generating a QR code or barcode
         html5QrCode.stop().then(ignore => {
           cameraContainer.style.display = 'none'; // Hide the camera container
+          closeCameraBtn.style.display = 'none'; // Hide the close camera button
         }).catch(err => {
           console.error('Failed to stop camera:', err);
         });
@@ -39,7 +46,16 @@ document.addEventListener("DOMContentLoaded", function () {
     ).catch(err => {
       console.error('Unable to start scanning:', err);
     });
-  });
+  }
+
+  function closeCamera() {
+    html5QrCode.stop().then(ignore => {
+      cameraContainer.style.display = 'none'; // Hide the camera container
+      closeCameraBtn.style.display = 'none'; // Hide the close camera button
+    }).catch(err => {
+      console.error('Failed to stop camera:', err);
+    });
+  }
 
   function generateQRCode() {
     const file = excelFileInput.files[0];

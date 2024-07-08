@@ -8,27 +8,29 @@ document.addEventListener("DOMContentLoaded", function () {
   const openCameraBtn = document.getElementById("open-camera-btn");
   const cameraContainer = document.getElementById('camera-container');
   let workbook; // Declare workbook variable outside
+  let html5QrCode;
 
   generateBtn.addEventListener("click", generateQRCode);
   printBtn.addEventListener("click", printQRCode);
   saveBtn.addEventListener("click", saveQRCode);
   openCameraBtn.addEventListener('click', openCamera);
-  
-  // Event listener for Open Camera button
+
   function openCamera() {
     cameraContainer.style.display = 'block'; // Show the camera container
-    const html5QrCode = new Html5Qrcode("reader");
+
+    // Initialize HTML5 QR Code Scanner
+    html5QrCode = new Html5Qrcode("reader");
 
     html5QrCode.start(
       { facingMode: "environment" }, // Use rear camera
       {
         fps: 90, // Optional, frames per second for qr code scanning
-        qrbox: { width: 300, height: 300 } // Optional, if you want bounded box UI
-        zoom: 2 // Zoom factor to zoom in on the camera view
+        qrbox: { width: 300, height: 300 }, // Optional, if you want bounded box UI
+        aspectRatio: 1 // Set aspect ratio to 1 for zoom effect (width equals height)
       },
       qrCodeMessage => {
         navigator.vibrate(200); // Vibrate for 200 milliseconds
-        alert('Scanned: ' + qrCodeMessage);   
+        alert('Scanned: ' + qrCodeMessage);
         // Here you can handle the scanned content, such as generating a QR code or barcode
         html5QrCode.stop().then(ignore => {
           cameraContainer.style.display = 'none'; // Hide the camera container
@@ -42,7 +44,7 @@ document.addEventListener("DOMContentLoaded", function () {
     ).catch(err => {
       console.error('Unable to start scanning:', err);
     });
-  });
+  }
 
   function generateQRCode() {
     const file = excelFileInput.files[0];

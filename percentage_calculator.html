@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl"> <!-- اتجاه الكتابة من اليمين إلى اليسار -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حساب النسبة المئوية</title>
+    <link rel="stylesheet" href="percentage_calculator.css">
+</head>
+<body>
+    <div class="container">
+        <h2>حساب النسبة المئوية</h2>
+        <form id="percentageForm">
+            <label class="large-text" for="amount">أدخل المبلغ</label>
+            <input type="text" id="amount" name="amount" required>
+            
+            <label class="large-text" for="percentage">أدخل النسبة المئوية</label>
+            <input type="text" id="percentage" name="percentage" required placeholder="%">
+
+            <label class="large-text" for="operation">اختر العملية</label>
+            <select id="operation" name="operation" size="1">
+                <option value="" disabled selected hidden>اختر العملية</option>
+                <option value="extract">استخراج النسبة من المبلغ فقط</option>
+                <option value="subtract">استخراج النسبة وطرحها من المبلغ</option>
+                <option value="add">استخراج النسبة واضافتها إلى المبلغ</option>
+            </select>
+            <button type="submit">احسب</button>
+        </form>
+        <div id="result"></div>
+        <div class="moving-text">*𝓚𝓐𝓡𝓘𝓜𝓐𝓗𝓜𝓔𝓓*</div>
+        
+        <button id="back-btn" class="side-button">الرجوع إلى الصفحة الرئيسية</button>
+        <button id="language-toggle-btn" class="side-button">Switch to English</button>
+    </div>
+    <script src="calculator.js"></script>
+    <script src="node_modules/number-to-arabic-words/dist/index.js"></script>
+    <script>
+        // JavaScript to handle language switching
+        document.addEventListener("DOMContentLoaded", function() {
+            const languageToggleBtn = document.getElementById("language-toggle-btn");
+            const currentLanguage = localStorage.getItem("currentLanguage") || "ar"; // اللغة الافتراضية هي العربية
+
+            // تعيين اللغة الحالية بناءً على قيمة currentLanguage
+            document.documentElement.lang = currentLanguage;
+
+            // تعيين النص على زر التبديل بناءً على اللغة الحالية
+            languageToggleBtn.textContent = currentLanguage === "ar" ? "Switch to English" : "تبديل إلى العربية";
+
+            // معالج الحدث لتبديل اللغة
+            languageToggleBtn.addEventListener("click", function() {
+                const newLanguage = currentLanguage === "ar" ? "en" : "ar";
+
+                // حفظ اللغة الجديدة في التخزين المحلي
+                localStorage.setItem("currentLanguage", newLanguage);
+
+                // إعادة تحميل الصفحة لتطبيق اللغة الجديدة
+                window.location.reload();
+            });
+        });
+    </script>
+</body>
+</html>

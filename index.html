@@ -3,27 +3,37 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/x-icon" href="/images/favicon.ico">
 <title>QR Generator for Excel</title>
 <link rel="stylesheet" href="styles.css">
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js" integrity="sha512-r6rDA7W6ZeQhvl8S7yRVQUKVHdexq+GAlNkNNqVC7YyIV+NwqCTJe2hDWCiffTyRNOeGEzRRJ9ifvRm/HCzGYg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
 <body>
-<div id="qr-code-container" class="container">
+<div class="container">
   <h1 class="title">QR Generator for Excel</h1>
-  <div class="qr-container">
+  <form class="qr-container">
     <div id="qr-code" class="qr-code"></div>
     <div id="item-name" class="item-name"></div>
-  </div>
-  <label for="excel-file">Choose Excel File:</label>
-  <input type="file" id="excel-file" accept=".xlsx">
-  <button id="generate-btn" class="btn">Generate QR Code</button>
-  <button id="print-btn" class="btn">Print QR Code</button>
-  <button id="save-btn" class="btn">Save QR Code</button>
-  <button id="open-camera-btn" class="btn">Open Camera</button>
+    <label for="excel-file">Choose Excel File</label>
+    <input type="file" id="excel-file" accept=".xlsx">
+    <label for="item-select">Select Item:</label>
+    <select id="item-select" class="input">
+        <option value="">-- Select Item --</option>
+    </select>
+
+    <button type="button" id="generate-btn" class="btn">Generate QR Code</button>
+    <button type="button" id="print-btn" class="btn">Print QR Code</button>
+    <button type="button" id="save-btn" class="btn">Save QR Code</button>
+    <button type="button" id="open-camera-btn" class="btn">Open Camera</button>
+    <button type="button" id="percentage-calculator-btn" class="btn">Calculate percentage</button>
+    <button type="button" id="language-toggle-btn" class="side-button">Switch to English</button>
+  </form>
   <div id="camera-container" style="display: none;">
     <div id="reader" width="600px"></div>
   </div>
+  <div id="result"></div>
+  <div class="moving-text">*𝓚𝓐𝓡𝓘𝓜𝓐𝓗𝓜𝓔𝓓*</div>
 </div>
 <script src="script.js"></script>
 </body>

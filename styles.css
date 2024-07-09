@@ -14,7 +14,19 @@ body {
   background-color: #fff;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   border-radius: 5px;
-  transform: translateY(-80px); /* Move container up by 50px */
+  position: relative;
+  overflow: hidden; /* لإخفاء النص عندما يخرج من حدود الحاوية */
+}
+
+.moving-text {
+  position: absolute;
+  bottom: 10px;
+  left: 100%;
+  white-space: nowrap; /* لمنع النص من الانتقال إلى سطر جديد */
+  animation: moveText 10s linear infinite;
+  color: blue;
+  text-align: center;
+  font-size: 16px;
 }
 
 .title {
@@ -50,15 +62,35 @@ body {
   width: 100%;
   padding: 10px;
   margin-bottom: 10px;
-  background-color: #4caf50;
+  background-color: #01a807;
   color: #fff;
   border: none;
   border-radius: 3px;
   cursor: pointer;
+  text-align: center;
+  font-size: 16px;
 }
 
 .btn:hover {
-  background-color: #45a049;
+  background-color: #1b0ed1;
+}
+
+.side-button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  background-color: #01a807;
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  text-align: center;
+  font-size: 16px;
+}
+
+.side-button:hover {
+  background-color: #1b0ed1;
 }
 
 .input {
@@ -76,4 +108,37 @@ input[type="file"] {
 label {
   display: block;
   margin-top: 10px;
+}
+
+#result,
+#convertedResult {
+    margin-top: 50px;
+    color: green;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+/* إضافة نص متحرك */
+@keyframes moveText {
+  0% {
+    left: 100%;
+    text-shadow: #FC0 1px 0 2px;
+  }
+  100% {
+    left: -100%;
+    text-shadow: #FC0 1px 0 2px;
+  }
+}
+
+.large-text {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+#numberInput {
+  margin-top: 50px;
+}
+
+html[dir="rtl"] {
+  font-family: 'Arial', sans-serif;
 }

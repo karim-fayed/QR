@@ -58,7 +58,7 @@ function openCamera() {
     .then(stream => {
       // بدء القراءة
       html5QrCode.start(
-        { videoSource: stream }, // استخدام مصدر الفيديو المعطى
+        stream, // استخدام مصدر الفيديو المعطى
         {
           fps: 90, // اختياري, إطارات في الثانية لفحص رمز QR
           qrbox: { width: 300, height: 300 }, // اختياري, إطار محصور لواجهة المستخدم
@@ -85,6 +85,7 @@ function openCamera() {
       console.error('خطأ في الوصول إلى الكاميرا:', err);
     });
 }
+
   function generateQRCode() {
     const file = excelFileInput.files[0];
     if (!file) {

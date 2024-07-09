@@ -42,55 +42,56 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
 function openCamera() {
+  // عرض كونتينر الكاميرا
   cameraContainer.style.display = 'block';
 
+  // التحقق من دعم getUserMedia في المتصفح
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
     console.error('getUserMedia is not supported in this browser');
     return;
   }
 
+  // إنشاء Html5Qrcode جديد
   html5QrCode = new Html5Qrcode("reader");
 
-    // الحصول على التيار من الكاميرا الخلفية
+  // الحصول على التيار من الكاميرا الخلفية
   navigator.mediaDevices.getUserMedia({ video: { facingMode: { exact: 'environment' } } })
     .then(stream => {
       const videoElement = document.querySelector('video');
       videoElement.srcObject = stream;
       videoElement.onloadedmetadata = () => {
         videoElement.play();
-        //الحصول على التيار من الكاميرا الامامية
-  //navigator.mediaDevices.getUserMedia({ video: true })
-   // .then(stream => {
-   //   const videoElement = document.querySelector('video');
-    //  videoElement.srcObject = stream;
-    //  videoElement.onloadedmetadata = () => {
-    //    videoElement.play();
+
+        // بدء فحص الـ QR
         html5QrCode.start(
           { videoSource: stream },
           {
-            fps: 90,
+            fps: 60, // زيادة FPS لزيادة حساسية القراءة
             qrbox: { width: 300, height: 300 },
-            aspectRatio: 2
+            aspectRatio: 2,
+            zoom: 3 // زيادة مستوى التكبير إلى 3
           },
           qrCodeMessage => {
-            navigator.vibrate(250);
-            alert('Scanned: ' + qrCodeMessage);
+            navigator.vibrate(250); // اهتزاز لإشارة مسح QR
+            alert('تم المسح: ' + qrCodeMessage);
+
+            // إيقاف الفحص عند الانتهاء
             html5QrCode.stop().then(ignore => {
-              cameraContainer.style.display = 'none';
+              cameraContainer.style.display = 'none'; // إخفاء الكونتينر بعد الانتهاء
             }).catch(err => {
-              console.error('Failed to stop camera:', err);
+              console.error('فشل في إيقاف الكاميرا:', err);
             });
           },
           errorMessage => {
-            console.warn(`QR Code no longer in front of camera.`);
+            console.warn(`لا يوجد QR Code أمام الكاميرا.`);
           }
         ).catch(err => {
-          console.error('Unable to start scanning:', err);
+          console.error('تعذر بدء الفحص:', err);
         });
       };
     })
     .catch(err => {
-      console.error('Error accessing camera:', err);
+      console.error('خطأ في الوصول إلى الكاميرا:', err);
     });
 }
 

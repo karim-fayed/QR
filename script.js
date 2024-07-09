@@ -41,59 +41,60 @@ document.addEventListener("DOMContentLoaded", function () {
     toggleLanguage(currentLanguage);
   });
 
-  function openCamera() {
-    // Show camera container
-    cameraContainer.style.display = 'block';
+function openCamera() {
+  // عرض كونتينر الكاميرا
+  cameraContainer.style.display = 'block';
 
-    // Check for getUserMedia support in the browser
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      console.error('getUserMedia is not supported in this browser');
-      return;
-    }
-
-    // Create new Html5Qrcode instance
-    html5QrCode = new Html5Qrcode("reader");
-
-    // Get stream from the back camera
-    navigator.mediaDevices.getUserMedia({ video: { facingMode: { exact: 'environment' } } })
-      .then(stream => {
-        const videoElement = document.querySelector('video');
-        videoElement.srcObject = stream;
-        videoElement.onloadedmetadata = () => {
-          videoElement.play();
-
-          // Start QR scanning
-          html5QrCode.start(
-            { videoSource: stream },
-            {
-              fps: 60, // Increase FPS for better sensitivity
-              qrbox: { width: 300, height: 300 },
-              aspectRatio: 2,
-              zoom: 3 // Increase zoom level to 3
-            },
-            qrCodeMessage => {
-              navigator.vibrate(250); // Vibration feedback for QR scan
-              alert('Scanned: ' + qrCodeMessage);
-
-              // Stop scanning after successful scan
-              html5QrCode.stop().then(ignore => {
-                cameraContainer.style.display = 'none'; // Hide container after scan
-              }).catch(err => {
-                console.error('Failed to stop camera:', err);
-              });
-            },
-            errorMessage => {
-              console.warn(`QR Code no longer in front of camera.`);
-            }
-          ).catch(err => {
-            console.error('Unable to start scanning:', err);
-          });
-        };
-      })
-      .catch(err => {
-        console.error('Error accessing camera:', err);
-      });
+  // التحقق من دعم getUserMedia في المتصفح
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    console.error('getUserMedia is not supported in this browser');
+    return;
   }
+
+  // إنشاء Html5Qrcode جديد
+  html5QrCode = new Html5Qrcode("reader");
+
+  // الحصول على التيار من الكاميرا الخلفية
+  navigator.mediaDevices.getUserMedia({ video: { facingMode: { exact: 'environment' } } })
+    .then(stream => {
+      const videoElement = document.querySelector('video');
+      videoElement.srcObject = stream;
+      videoElement.onloadedmetadata = () => {
+        videoElement.play();
+
+        // بدء فحص الـ QR
+        html5QrCode.start(
+          { videoSource: stream },
+          {
+            fps: 60, // زيادة FPS لزيادة حساسية القراءة
+            qrbox: { width: 300, height: 300 },
+            aspectRatio: 2,
+            zoom: 3 // زيادة مستوى التكبير إلى 3
+          },
+          qrCodeMessage => {
+            navigator.vibrate(250); // اهتزاز لإشارة مسح QR
+            alert('تم المسح: ' + qrCodeMessage);
+
+            // إيقاف الفحص عند الانتهاء
+            html5QrCode.stop().then(ignore => {
+              cameraContainer.style.display = 'none'; // إخفاء الكونتينر بعد الانتهاء
+            }).catch(err => {
+              console.error('فشل في إيقاف الكاميرا:', err);
+            });
+          },
+          errorMessage => {
+            console.warn(`لا يوجد QR Code أمام الكاميرا.`);
+          }
+        ).catch(err => {
+          console.error('تعذر بدء الفحص:', err);
+        });
+      };
+    })
+    .catch(err => {
+      console.error('خطأ في الوصول إلى الكاميرا:', err);
+    });
+}
+
 
   function generateQRCode() {
     const file = excelFileInput.files[0];
@@ -185,6 +186,52 @@ document.addEventListener("DOMContentLoaded", function () {
     qrWindow.document.close();
   }
 
+  function generateAllQRCodes(jsonData) {
+    let qrCodesHTML = "";
+
+    for (let i = 1; i < jsonData.length; i++) {
+      const itemName = jsonData[i][0];
+      const dataValue = jsonData[i][3]; // Assuming data is in column D
+
+      if (!itemName || !dataValue) {
+        continue;
+      }
+
+      const qrCodeImageSrc = `https://quickchart.io/qr?text=${encodeURIComponent(dataValue)}`;
+
+      qrCodesHTML += `
+        <div class="qr-code-container">
+          <div class="qr-code">
+            <img src="${qrCodeImageSrc}" alt="QR Code">
+          </div>
+          <div class="item-name">${itemName}</div>
+        </div>
+      `;
+    }
+
+    const qrWindow = window.open("", "_blank");
+    qrWindow.document.write(`
+      <html>
+      <head>
+        <title>Generated QR Codes</title>
+        <style>
+          body { font-family: Arial, sans-serif; margin: 20px; }
+          .qr-code-container { margin-bottom: 20px; }
+          .qr-code { width: 150px; height: 150px; margin: 0 auto; }
+          .item-name { text-align: center; margin-top: -10px; font-size: 10px; font-weight: bold; }
+        </style>
+      </head>
+      <body>
+        <h1 style="text-align: center;"></h1>
+        <div class="qr-codes-container">
+          ${qrCodesHTML}
+        </div>
+      </body>
+      </html>
+    `);
+    qrWindow.document.close();
+  }
+
   function printQRCode() {
     // Not implemented for vertical display
   }
@@ -201,6 +248,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
+
   function toggleLanguage(lang) {
     if (lang === 'en') {
       document.getElementById('language-toggle-btn').textContent = 'تبديل إلى العربية';
@@ -216,6 +264,14 @@ document.addEventListener("DOMContentLoaded", function () {
       saveBtn.textContent = 'حفظ رمز الاستجابة السريعة';
       openCameraBtn.textContent = 'فتح الكاميرا';
       percentageCalculatorBtn.textContent = 'حساب النسبة المئوية';
+    }
+  }
+
+  function getTextByLanguage(textKey) {
+    if (currentLanguage === 'en') {
+      return langEn[textKey];
+    } else if (currentLanguage === 'ar') {
+      return langAr[textKey];
     }
   }
 });

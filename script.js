@@ -51,12 +51,20 @@ function openCamera() {
 
   html5QrCode = new Html5Qrcode("reader");
 
-  navigator.mediaDevices.getUserMedia({ video: true })
+    // الحصول على التيار من الكاميرا الخلفية
+  navigator.mediaDevices.getUserMedia({ video: { facingMode: { exact: 'environment' } } })
     .then(stream => {
       const videoElement = document.querySelector('video');
       videoElement.srcObject = stream;
       videoElement.onloadedmetadata = () => {
         videoElement.play();
+        //الحصول على التيار من الكاميرا الامامية
+  //navigator.mediaDevices.getUserMedia({ video: true })
+   // .then(stream => {
+   //   const videoElement = document.querySelector('video');
+    //  videoElement.srcObject = stream;
+    //  videoElement.onloadedmetadata = () => {
+    //    videoElement.play();
         html5QrCode.start(
           { videoSource: stream },
           {

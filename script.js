@@ -42,49 +42,50 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
 function openCamera() {
-  cameraContainer.style.display = 'block'; // إظهار حاوية الكاميرا
+  cameraContainer.style.display = 'block';
 
-  // التأكد من دعم الكاميرا
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
     console.error('getUserMedia is not supported in this browser');
     return;
   }
 
-  // إنشاء مثيل جديد لـ Html5Qrcode
   html5QrCode = new Html5Qrcode("reader");
 
-  // الحصول على إذن الوصول إلى الكاميرا
   navigator.mediaDevices.getUserMedia({ video: true })
     .then(stream => {
-      // بدء القراءة
-      html5QrCode.start(
-        stream, // استخدام مصدر الفيديو المعطى
-        {
-          fps: 90, // اختياري, إطارات في الثانية لفحص رمز QR
-          qrbox: { width: 300, height: 300 }, // اختياري, إطار محصور لواجهة المستخدم
-          aspectRatio: 2 // تعيين نسبة العرض إلى الارتفاع لتأثير التكبير
-        },
-        qrCodeMessage => {
-          navigator.vibrate(250); // الاهتزاز لمدة 250 ميلي ثانية
-          alert('تم الفحص: ' + qrCodeMessage);
-          // يمكنك التعامل هنا مع محتوى الرمز الممسوح, مثل إنشاء رمز QR أو رمز باركود
-          html5QrCode.stop().then(ignore => {
-            cameraContainer.style.display = 'none'; // إخفاء حاوية الكاميرا بعد الانتهاء من القراءة
-          }).catch(err => {
-            console.error('فشل في إيقاف الكاميرا:', err);
-          });
-        },
-        errorMessage => {
-          console.warn('لا يوجد رمز QR أمام الكاميرا.');
-        }
-      ).catch(err => {
-        console.error('غير قادر على بدء القراءة:', err);
-      });
+      const videoElement = document.querySelector('video');
+      videoElement.srcObject = stream;
+      videoElement.onloadedmetadata = () => {
+        videoElement.play();
+        html5QrCode.start(
+          { videoSource: stream },
+          {
+            fps: 90,
+            qrbox: { width: 300, height: 300 },
+            aspectRatio: 2
+          },
+          qrCodeMessage => {
+            navigator.vibrate(250);
+            alert('Scanned: ' + qrCodeMessage);
+            html5QrCode.stop().then(ignore => {
+              cameraContainer.style.display = 'none';
+            }).catch(err => {
+              console.error('Failed to stop camera:', err);
+            });
+          },
+          errorMessage => {
+            console.warn(`QR Code no longer in front of camera.`);
+          }
+        ).catch(err => {
+          console.error('Unable to start scanning:', err);
+        });
+      };
     })
     .catch(err => {
-      console.error('خطأ في الوصول إلى الكاميرا:', err);
+      console.error('Error accessing camera:', err);
     });
 }
+
 
   function generateQRCode() {
     const file = excelFileInput.files[0];

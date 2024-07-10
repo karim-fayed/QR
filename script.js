@@ -171,13 +171,47 @@ document.addEventListener("DOMContentLoaded", function () {
     qrCodeDiv.innerHTML = qrCodesHTML;
   }
 
-  function printQRCode() {
-    // Not implemented for vertical display
-  }
+// تحسين وضع الكاميرا
+const cameraConfig = {
+  facingMode: 'environment', // 'user' للكاميرا الأمامية
+  zoom: 2, // زيادة مستوى التكبير
+  width: 640, // عرض الصورة
+  height: 480 // ارتفاع الصورة
+};
 
-  function saveQRCode() {
-    // Not implemented for vertical display
-  }
+// إضافة ميزات للطباعة والحفظ
+printBtn.addEventListener("click", printQRCode);
+saveBtn.addEventListener("click", saveQRCode);
+
+function printQRCode() {
+  // استخدم html2canvas لالتقاط صورة للعناصر المرئية
+  html2canvas(qrCodeDiv).then(canvas => {
+    const imageData = canvas.toDataURL("image/png");
+
+    // إنشاء عنصر img جديد للطباعة
+    const printImg = new Image();
+    printImg.src = imageData;
+
+    // فتح نافذة طباعة وطباعة الصورة
+    const printWindow = window.open();
+    printWindow.document.write("<img src='" + printImg.src + "' />");
+    printWindow.document.close();
+    printWindow.print();
+  });
+}
+
+function saveQRCode() {
+  html2canvas(qrCodeDiv).then(canvas => {
+    const imageData = canvas.toDataURL("image/png");
+
+    // إنشاء رابط لتنزيل الصورة
+    const downloadLink = document.createElement("a");
+    downloadLink.href = imageData;
+    downloadLink.download = "QRCode.png";
+    downloadLink.click();
+  });
+}
+
 
   const langEn = {
     selectFileAlert: 'Please select a file.',

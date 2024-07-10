@@ -31,63 +31,66 @@ document.addEventListener("DOMContentLoaded", function () {
     toggleLanguage(currentLanguage);
   });
 
-function openCamera() {
-  // عرض كونتينر الكاميرا
-  cameraContainer.style.display = 'block';
-
-  // إنشاء Html5Qrcode جديد
-  html5QrCode = new Html5Qrcode("reader");
-
-  // التحقق من دعم getUserMedia في المتصفح
-  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    console.error('getUserMedia is not supported in this browser');
-    alert('getUserMedia is not supported in this browser');
-    return;
-  }
-
-  navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } }) // استخدام facingMode: "environment" هنا
-    .then(function (stream) {
-      // بدء فحص الـ QR
-      html5QrCode.start(
-        {},
-        {
-          fps: 60, // زيادة FPS لزيادة حساسية القراءة
-          qrbox: { width: 300, height: 300 },
-          aspectRatio: 1,
-          zoom: 1.5 // زيادة مستوى التكبير إلى 1.5
-        },
-        qrCodeMessage => {
-          navigator.vibrate(250); // اهتزاز لإشارة مسح QR
-          alert('تم المسح: ' + qrCodeMessage);
-
-          // إيقاف الفحص عند الانتهاء
-          html5QrCode.stop().then(ignore => {
-            cameraContainer.style.display = 'none'; // إخفاء الكونتينر بعد الانتهاء
-          }).catch(err => {
-            console.error('فشل في إيقاف الكاميرا:', err);
+  function openCamera() {
+    // Show camera container
+    cameraContainer.style.display = 'block';
+  
+    // Create new Html5Qrcode instance
+    html5QrCode = new Html5Qrcode("reader");
+  
+    // Check for getUserMedia support in the browser
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      console.error('getUserMedia is not supported in this browser');
+      alert('getUserMedia is not supported in this browser');
+      return;
+    }
+  
+    // Prepare camera configuration object
+    const cameraConfig = {
+      facingMode: 'environment' // Use 'environment' for rear-facing camera
+    };
+  
+    // Flag to track if scanning is active
+    let scanningActive = true;
+  
+    navigator.mediaDevices.getUserMedia({ video: cameraConfig })
+      .then(function (stream) {
+        // Start QR code scanning if scanningActive is true
+        if (scanningActive) {
+          html5QrCode.start(
+            cameraConfig, // Pass camera configuration object
+            {
+              fps: 60, // Increase FPS for better scanning sensitivity
+              qrbox: { width: 300, height: 300 },
+              aspectRatio: 1,
+              zoom: 1.5 // Increase zoom level to 1.5
+            },
+            qrCodeMessage => {
+              // Check if scanning is still active
+              if (scanningActive) {
+                navigator.vibrate(250); // Vibrate to signal QR code scan
+                alert('QR Code scanned: ' + qrCodeMessage);
+  
+                // Stop scanning after successful scan
+                html5QrCode.stop().then(ignore => {
+                  cameraContainer.style.display = 'none'; // Hide container after completion
+                  scanningActive = false; // Set scanningActive to false
+                }).catch(err => {
+                  console.error('Failed to stop camera:', err);
+                });
+              }
+            },
+            errorMessage => {
+              console.warn('No QR Code found in front of the camera.');
+              scanningActive = false; // Set scanningActive to false on error
+            }
+          ).catch(err => {
+            console.error('Failed to start scanning:', err);
           });
-        },
-        errorMessage => {
-          console.warn(`لا يوجد QR Code أمام الكاميرا.`);
         }
-      ).catch(err => {
-        console.error('تعذر بدء الفحص:', err);
-      });
-    })
-    .catch(err => {
-      console.error('خطأ في الوصول إلى الكاميرا:', err);
-      if (err.name === 'NotAllowedError') {
-        alert('تم رفض إذن الوصول إلى الكاميرا. الرجاء السماح بالوصول لاستخدام الكاميرا.');
-      } else if (err.name === 'NotFoundError') {
-        alert('لم يتم العثور على كاميرا. الرجاء التأكد من أن جهازك يحتوي على كاميرا.');
-      } else {
-        alert('خطأ في الوصول إلى الكاميرا: ' + err.message);
-      }
-    });
-}
-
+      })
       .catch(err => {
-        console.error('خطأ في الوصول إلى الكاميرا:', err);
+        console.error('Error accessing camera:', err);
         if (err.name === 'NotAllowedError') {
           alert('Permission to access the camera was denied. Please allow access to use the camera.');
         } else if (err.name === 'NotFoundError') {
@@ -97,7 +100,7 @@ function openCamera() {
         }
       });
   }
-
+  
   function generateQRCode() {
     const file = excelFileInput.files[0];
     if (!file) {

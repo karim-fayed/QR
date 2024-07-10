@@ -13,16 +13,6 @@ document.addEventListener("DOMContentLoaded", function () {
   let workbook;
   let html5QrCode;
 
-  const langEn = {
-    selectFileAlert: 'Please select a file.',
-    selectItem: 'Select an item...'
-  };
-
-  const langAr = {
-    selectFileAlert: 'الرجاء اختيار ملف.',
-    selectItem: 'اختر عنصراً...'
-  };
-
   // Load language preference from localStorage
   let currentLanguage = localStorage.getItem("currentLanguage") || "en";
   toggleLanguage(currentLanguage);
@@ -41,35 +31,30 @@ document.addEventListener("DOMContentLoaded", function () {
     toggleLanguage(currentLanguage);
   });
 
-function openCamera() {
-  // عرض كونتينر الكاميرا
-  cameraContainer.style.display = 'block';
+  function openCamera() {
+    // عرض كونتينر الكاميرا
+    cameraContainer.style.display = 'block';
 
-  // التحقق من دعم getUserMedia في المتصفح
-  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    console.error('getUserMedia is not supported in this browser');
-    return;
-  }
+    // إنشاء Html5Qrcode جديد
+    html5QrCode = new Html5Qrcode("reader");
 
-  // إنشاء Html5Qrcode جديد
-  html5QrCode = new Html5Qrcode("reader");
+    // التحقق من دعم getUserMedia في المتصفح
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      console.error('getUserMedia is not supported in this browser');
+      alert('getUserMedia is not supported in this browser');
+      return;
+    }
 
-  // الحصول على التيار من الكاميرا الخلفية
-  navigator.mediaDevices.getUserMedia({ video: { facingMode: { exact: 'environment' } } })
-    .then(stream => {
-      const videoElement = document.querySelector('video');
-      videoElement.srcObject = stream;
-      videoElement.onloadedmetadata = () => {
-        videoElement.play();
-
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then(function (stream) {
         // بدء فحص الـ QR
         html5QrCode.start(
-          { videoSource: stream },
+          { facingMode: "environment" },
           {
             fps: 60, // زيادة FPS لزيادة حساسية القراءة
             qrbox: { width: 300, height: 300 },
-            aspectRatio: 2,
-            zoom: 3 // زيادة مستوى التكبير إلى 3
+            aspectRatio: 1,
+            zoom: 1.5 // زيادة مستوى التكبير إلى 1.5
           },
           qrCodeMessage => {
             navigator.vibrate(250); // اهتزاز لإشارة مسح QR
@@ -88,13 +73,18 @@ function openCamera() {
         ).catch(err => {
           console.error('تعذر بدء الفحص:', err);
         });
-      };
-    })
-    .catch(err => {
-      console.error('خطأ في الوصول إلى الكاميرا:', err);
-    });
-}
-
+      })
+      .catch(err => {
+        console.error('خطأ في الوصول إلى الكاميرا:', err);
+        if (err.name === 'NotAllowedError') {
+          alert('Permission to access the camera was denied. Please allow access to use the camera.');
+        } else if (err.name === 'NotFoundError') {
+          alert('No camera found. Please ensure your device has a camera.');
+        } else {
+          alert('Error accessing the camera: ' + err.message);
+        }
+      });
+  }
 
   function generateQRCode() {
     const file = excelFileInput.files[0];
@@ -121,7 +111,7 @@ function openCamera() {
       if (selectedItem) {
         generateSingleQRCode(selectedItem, jsonData);
       } else {
-        generateAllQRCodes(jsonData);
+        alert(getTextByLanguage('selectItem'));
       }
     };
     reader.readAsArrayBuffer(file);
@@ -163,73 +153,7 @@ function openCamera() {
       `;
     }).join("");
 
-    const qrWindow = window.open("", "_blank");
-    qrWindow.document.write(`
-      <html>
-      <head>
-        <title>Generated QR Codes</title>
-        <style>
-          body { font-family: Arial, sans-serif; margin: 20px; }
-          .qr-code-container { margin-bottom: 20px; }
-          .qr-code { width: 150px; height: 150px; margin: 0 auto; }
-          .item-name { text-align: center; margin-top: -10px; font-size: 10px; font-weight: bold; }
-        </style>
-      </head>
-      <body>
-        <h1 style="text-align: center;"></h1>
-        <div class="qr-codes-container">
-          ${qrCodesHTML}
-        </div>
-      </body>
-      </html>
-    `);
-    qrWindow.document.close();
-  }
-
-  function generateAllQRCodes(jsonData) {
-    let qrCodesHTML = "";
-
-    for (let i = 1; i < jsonData.length; i++) {
-      const itemName = jsonData[i][0];
-      const dataValue = jsonData[i][3]; // Assuming data is in column D
-
-      if (!itemName || !dataValue) {
-        continue;
-      }
-
-      const qrCodeImageSrc = `https://quickchart.io/qr?text=${encodeURIComponent(dataValue)}`;
-
-      qrCodesHTML += `
-        <div class="qr-code-container">
-          <div class="qr-code">
-            <img src="${qrCodeImageSrc}" alt="QR Code">
-          </div>
-          <div class="item-name">${itemName}</div>
-        </div>
-      `;
-    }
-
-    const qrWindow = window.open("", "_blank");
-    qrWindow.document.write(`
-      <html>
-      <head>
-        <title>Generated QR Codes</title>
-        <style>
-          body { font-family: Arial, sans-serif; margin: 20px; }
-          .qr-code-container { margin-bottom: 20px; }
-          .qr-code { width: 150px; height: 150px; margin: 0 auto; }
-          .item-name { text-align: center; margin-top: -10px; font-size: 10px; font-weight: bold; }
-        </style>
-      </head>
-      <body>
-        <h1 style="text-align: center;"></h1>
-        <div class="qr-codes-container">
-          ${qrCodesHTML}
-        </div>
-      </body>
-      </html>
-    `);
-    qrWindow.document.close();
+    qrCodeDiv.innerHTML = qrCodesHTML;
   }
 
   function printQRCode() {
@@ -240,14 +164,15 @@ function openCamera() {
     // Not implemented for vertical display
   }
 
-  function getTextByLanguage(textKey) {
-    if (currentLanguage === 'en') {
-      return langEn[textKey];
-    } else if (currentLanguage === 'ar') {
-      return langAr[textKey];
-    }
-  }
+  const langEn = {
+    selectFileAlert: 'Please select a file.',
+    selectItem: 'Select an item...'
+  };
 
+  const langAr = {
+    selectFileAlert: 'الرجاء اختيار ملف.',
+    selectItem: 'اختر عنصراً...'
+  };
 
   function toggleLanguage(lang) {
     if (lang === 'en') {

@@ -31,49 +31,61 @@ document.addEventListener("DOMContentLoaded", function () {
     toggleLanguage(currentLanguage);
   });
 
-  function openCamera() {
-    // عرض كونتينر الكاميرا
-    cameraContainer.style.display = 'block';
+function openCamera() {
+  // عرض كونتينر الكاميرا
+  cameraContainer.style.display = 'block';
 
-    // إنشاء Html5Qrcode جديد
-    html5QrCode = new Html5Qrcode("reader");
+  // إنشاء Html5Qrcode جديد
+  html5QrCode = new Html5Qrcode("reader");
 
-    // التحقق من دعم getUserMedia في المتصفح
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      console.error('getUserMedia is not supported in this browser');
-      alert('getUserMedia is not supported in this browser');
-      return;
-    }
+  // التحقق من دعم getUserMedia في المتصفح
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    console.error('getUserMedia is not supported in this browser');
+    alert('getUserMedia is not supported in this browser');
+    return;
+  }
 
-    navigator.mediaDevices.getUserMedia({ video: true })
-      .then(function (stream) {
-        // بدء فحص الـ QR
-        html5QrCode.start(
-          { facingMode: "environment" },
-          {
-            fps: 60, // زيادة FPS لزيادة حساسية القراءة
-            qrbox: { width: 300, height: 300 },
-            aspectRatio: 1,
-            zoom: 1.5 // زيادة مستوى التكبير إلى 1.5
-          },
-          qrCodeMessage => {
-            navigator.vibrate(250); // اهتزاز لإشارة مسح QR
-            alert('تم المسح: ' + qrCodeMessage);
+  navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } }) // استخدام facingMode: "environment" هنا
+    .then(function (stream) {
+      // بدء فحص الـ QR
+      html5QrCode.start(
+        {},
+        {
+          fps: 60, // زيادة FPS لزيادة حساسية القراءة
+          qrbox: { width: 300, height: 300 },
+          aspectRatio: 1,
+          zoom: 1.5 // زيادة مستوى التكبير إلى 1.5
+        },
+        qrCodeMessage => {
+          navigator.vibrate(250); // اهتزاز لإشارة مسح QR
+          alert('تم المسح: ' + qrCodeMessage);
 
-            // إيقاف الفحص عند الانتهاء
-            html5QrCode.stop().then(ignore => {
-              cameraContainer.style.display = 'none'; // إخفاء الكونتينر بعد الانتهاء
-            }).catch(err => {
-              console.error('فشل في إيقاف الكاميرا:', err);
-            });
-          },
-          errorMessage => {
-            console.warn(`لا يوجد QR Code أمام الكاميرا.`);
-          }
-        ).catch(err => {
-          console.error('تعذر بدء الفحص:', err);
-        });
-      })
+          // إيقاف الفحص عند الانتهاء
+          html5QrCode.stop().then(ignore => {
+            cameraContainer.style.display = 'none'; // إخفاء الكونتينر بعد الانتهاء
+          }).catch(err => {
+            console.error('فشل في إيقاف الكاميرا:', err);
+          });
+        },
+        errorMessage => {
+          console.warn(`لا يوجد QR Code أمام الكاميرا.`);
+        }
+      ).catch(err => {
+        console.error('تعذر بدء الفحص:', err);
+      });
+    })
+    .catch(err => {
+      console.error('خطأ في الوصول إلى الكاميرا:', err);
+      if (err.name === 'NotAllowedError') {
+        alert('تم رفض إذن الوصول إلى الكاميرا. الرجاء السماح بالوصول لاستخدام الكاميرا.');
+      } else if (err.name === 'NotFoundError') {
+        alert('لم يتم العثور على كاميرا. الرجاء التأكد من أن جهازك يحتوي على كاميرا.');
+      } else {
+        alert('خطأ في الوصول إلى الكاميرا: ' + err.message);
+      }
+    });
+}
+
       .catch(err => {
         console.error('خطأ في الوصول إلى الكاميرا:', err);
         if (err.name === 'NotAllowedError') {

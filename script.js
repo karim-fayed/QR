@@ -6,8 +6,10 @@ document.addEventListener("DOMContentLoaded", function () {
   const itemNameDiv = document.getElementById("item-name");
   const excelFileInput = document.getElementById("excel-file");
   const openCameraBtn = document.getElementById("open-camera-btn");
-  const cameraContainer = document.getElementById('camera-container');
-  const percentageCalculatorBtn = document.getElementById("percentage-calculator-btn");
+  const cameraContainer = document.getElementById("camera-container");
+  const percentageCalculatorBtn = document.getElementById(
+    "percentage-calculator-btn"
+  );
   const languageToggleBtn = document.getElementById("language-toggle-btn");
   const itemSelect = document.getElementById("item-select");
   let workbook;
@@ -20,91 +22,62 @@ document.addEventListener("DOMContentLoaded", function () {
   generateBtn.addEventListener("click", generateQRCode);
   printBtn.addEventListener("click", printQRCode);
   saveBtn.addEventListener("click", saveQRCode);
-  openCameraBtn.addEventListener('click', openCamera);
-  percentageCalculatorBtn.addEventListener("click", function() {
+  openCameraBtn.addEventListener("click", openCamera);
+  percentageCalculatorBtn.addEventListener("click", function () {
     window.location.href = "percentage_calculator.html";
   });
-
-  languageToggleBtn.addEventListener("click", function() {
+  languageToggleBtn.addEventListener("click", function () {
     currentLanguage = currentLanguage === "en" ? "ar" : "en";
     localStorage.setItem("currentLanguage", currentLanguage);
     toggleLanguage(currentLanguage);
   });
-
+  // تحسين وضع الكاميرا
+  const cameraConfig = {
+    facingMode: "environment", // 'user' للكاميرا الأمامية
+    zoom: 10, // زيادة مستوى التكبير
+    width: 640, // عرض الصورة
+    height: 480 // ارتفاع الصورة
+  };
   function openCamera() {
-    // Show camera container
-    cameraContainer.style.display = 'block';
-  
-    // Create new Html5Qrcode instance
+    cameraContainer.style.display = "block"; // Show the camera container
+
+    // Initialize HTML5 QR Code Scanner
     html5QrCode = new Html5Qrcode("reader");
-  
-    // Check for getUserMedia support in the browser
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      console.error('getUserMedia is not supported in this browser');
-      alert('getUserMedia is not supported in this browser');
-      return;
-    }
-  
-    // Prepare camera configuration object
-    const cameraConfig = {
-      facingMode: 'environment' // Use 'environment' for rear-facing camera
-    };
-  
-    // Flag to track if scanning is active
-    let scanningActive = true;
-  
-    navigator.mediaDevices.getUserMedia({ video: cameraConfig })
-      .then(function (stream) {
-        // Start QR code scanning if scanningActive is true
-        if (scanningActive) {
-          html5QrCode.start(
-            cameraConfig, // Pass camera configuration object
-            {
-              fps: 95, // Increase FPS for better scanning sensitivity
-              qrbox: { width: 300, height: 300 },
-              aspectRatio: 1,
-              zoom: 3 // Increase zoom level to 1.5
-            },
-            qrCodeMessage => {
-              // Check if scanning is still active
-              if (scanningActive) {
-                navigator.vibrate(250); // Vibrate to signal QR code scan
-                alert('QR Code scanned: ' + qrCodeMessage);
-  
-                // Stop scanning after successful scan
-                html5QrCode.stop().then(ignore => {
-                  cameraContainer.style.display = 'none'; // Hide container after completion
-                  scanningActive = false; // Set scanningActive to false
-                }).catch(err => {
-                  console.error('Failed to stop camera:', err);
-                });
-              }
-            },
-            errorMessage => {
-              console.warn('No QR Code found in front of the camera.');
-              scanningActive = false; // Set scanningActive to false on error
-            }
-          ).catch(err => {
-            console.error('Failed to start scanning:', err);
-          });
+
+    html5QrCode
+      .start(
+        { facingMode: "environment" }, // Use rear camera
+        {
+          fps: 120, // Optional, frames per second for qr code scanning
+          qrbox: { width: 250, height: 250 }, // Optional, if you want bounded box UI
+          aspectRatio: 1 // Set aspect ratio to 1 for zoom effect (width equals height)
+        },
+        (qrCodeMessage) => {
+          navigator.vibrate(350); // Vibrate for 200 milliseconds
+          alert("Scanned: " + qrCodeMessage);
+          // Here you can handle the scanned content, such as generating a QR code or barcode
+          html5QrCode
+            .stop()
+            .then((ignore) => {
+              cameraContainer.style.display = "none"; // Hide the camera container
+            })
+            .catch((err) => {
+              console.error("Failed to stop camera:", err);
+            });
+        },
+        (errorMessage) => {
+          console.warn(`QR Code no longer in front of camera.`);
         }
-      })
-      .catch(err => {
-        console.error('Error accessing camera:', err);
-        if (err.name === 'NotAllowedError') {
-          alert('Permission to access the camera was denied. Please allow access to use the camera.');
-        } else if (err.name === 'NotFoundError') {
-          alert('No camera found. Please ensure your device has a camera.');
-        } else {
-          alert('Error accessing the camera: ' + err.message);
-        }
+      )
+      .catch((err) => {
+        console.error("Unable to start scanning:", err);
       });
   }
-  
+
   function generateQRCode() {
     const file = excelFileInput.files[0];
     if (!file) {
-      alert(getTextByLanguage('selectFileAlert'));
+      alert(getTextByLanguage("selectFileAlert"));
       return;
     }
 
@@ -126,7 +99,7 @@ document.addEventListener("DOMContentLoaded", function () {
       if (selectedItem) {
         generateSingleQRCode(selectedItem, jsonData);
       } else {
-        alert(getTextByLanguage('selectItem'));
+        alert(getTextByLanguage("selectItem"));
       }
     };
     reader.readAsArrayBuffer(file);
@@ -135,15 +108,15 @@ document.addEventListener("DOMContentLoaded", function () {
   function populateDropdown(jsonData) {
     itemSelect.innerHTML = "";
 
-    const defaultOption = document.createElement('option');
-    defaultOption.text = getTextByLanguage('selectItem');
+    const defaultOption = document.createElement("option");
+    defaultOption.text = getTextByLanguage("selectItem");
     defaultOption.value = "";
     itemSelect.appendChild(defaultOption);
 
     for (let i = 1; i < jsonData.length; i++) {
       const itemName = jsonData[i][0];
       if (itemName) {
-        const option = document.createElement('option');
+        const option = document.createElement("option");
         option.text = itemName;
         option.value = itemName;
         itemSelect.appendChild(option);
@@ -152,13 +125,16 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function generateSingleQRCode(selectedItem, jsonData) {
-    const filteredData = jsonData.filter(row => row[0] === selectedItem);
+    const filteredData = jsonData.filter((row) => row[0] === selectedItem);
 
-    let qrCodesHTML = filteredData.map(row => {
-      const itemName = row[0];
-      const dataValue = row[3]; // Assuming data is in column D
-      const qrCodeImageSrc = `https://quickchart.io/qr?text=${encodeURIComponent(dataValue)}`;
-      return `
+    let qrCodesHTML = filteredData
+      .map((row) => {
+        const itemName = row[0];
+        const dataValue = row[3]; // Assuming data is in column D
+        const qrCodeImageSrc = `https://quickchart.io/qr?text=${encodeURIComponent(
+          dataValue
+        )}`;
+        return `
         <div class="qr-code-container">
           <div class="qr-code">
             <img src="${qrCodeImageSrc}" alt="QR Code">
@@ -166,85 +142,78 @@ document.addEventListener("DOMContentLoaded", function () {
           <div class="item-name">${itemName}</div>
         </div>
       `;
-    }).join("");
+      })
+      .join("");
 
     qrCodeDiv.innerHTML = qrCodesHTML;
   }
+  // إضافة ميزات للطباعة والحفظ
+  printBtn.addEventListener("click", printQRCode);
+  saveBtn.addEventListener("click", saveQRCode);
 
-// تحسين وضع الكاميرا
-const cameraConfig = {
-  facingMode: 'environment', // 'user' للكاميرا الأمامية
-  zoom: 2, // زيادة مستوى التكبير
-  width: 640, // عرض الصورة
-  height: 480 // ارتفاع الصورة
-};
+  function printQRCode() {
+    // استخدم html2canvas لالتقاط صورة للعناصر المرئية
+    html2canvas(qrCodeDiv).then((canvas) => {
+      const imageData = canvas.toDataURL("image/png");
 
-// إضافة ميزات للطباعة والحفظ
-printBtn.addEventListener("click", printQRCode);
-saveBtn.addEventListener("click", saveQRCode);
+      // إنشاء عنصر img جديد للطباعة
+      const printImg = new Image();
+      printImg.src = imageData;
 
-function printQRCode() {
-  // استخدم html2canvas لالتقاط صورة للعناصر المرئية
-  html2canvas(qrCodeDiv).then(canvas => {
-    const imageData = canvas.toDataURL("image/png");
+      // فتح نافذة طباعة وطباعة الصورة
+      const printWindow = window.open();
+      printWindow.document.write("<img src='" + printImg.src + "' />");
+      printWindow.document.close();
+      printWindow.print();
+    });
+  }
 
-    // إنشاء عنصر img جديد للطباعة
-    const printImg = new Image();
-    printImg.src = imageData;
+  function saveQRCode() {
+    html2canvas(qrCodeDiv).then((canvas) => {
+      const imageData = canvas.toDataURL("image/png");
 
-    // فتح نافذة طباعة وطباعة الصورة
-    const printWindow = window.open();
-    printWindow.document.write("<img src='" + printImg.src + "' />");
-    printWindow.document.close();
-    printWindow.print();
-  });
-}
-
-function saveQRCode() {
-  html2canvas(qrCodeDiv).then(canvas => {
-    const imageData = canvas.toDataURL("image/png");
-
-    // إنشاء رابط لتنزيل الصورة
-    const downloadLink = document.createElement("a");
-    downloadLink.href = imageData;
-    downloadLink.download = "QRCode.png";
-    downloadLink.click();
-  });
-}
-
+      // إنشاء رابط لتنزيل الصورة
+      const downloadLink = document.createElement("a");
+      downloadLink.href = imageData;
+      downloadLink.download = "QRCode.png";
+      downloadLink.click();
+    });
+  }
 
   const langEn = {
-    selectFileAlert: 'Please select a file.',
-    selectItem: 'Select an item...'
+    selectFileAlert: "Please select a file.",
+    selectItem: "Select an item..."
   };
 
   const langAr = {
-    selectFileAlert: 'الرجاء اختيار ملف.',
-    selectItem: 'اختر عنصراً...'
+    selectFileAlert: "الرجاء اختيار ملف.",
+    selectItem: "اختر عنصراً..."
   };
 
   function toggleLanguage(lang) {
-    if (lang === 'en') {
-      document.getElementById('language-toggle-btn').textContent = 'تبديل إلى العربية';
-      generateBtn.textContent = 'Generate QR Code';
-      printBtn.textContent = 'Print QR Code';
-      saveBtn.textContent = 'Save QR Code';
-      openCameraBtn.textContent = 'Open Camera';
-      percentageCalculatorBtn.textContent = 'Calculate percentage';
-    } else if (lang === 'ar') {
-      document.getElementById('language-toggle-btn').textContent = 'Switch to English';
-      generateBtn.textContent = 'إنشاء رمز الاستجابة السريعة';
-      printBtn.textContent = 'طباعة رمز الاستجابة السريعة';
-      saveBtn.textContent = 'حفظ رمز الاستجابة السريعة';
-      openCameraBtn.textContent = 'فتح الكاميرا';
-      percentageCalculatorBtn.textContent = 'حساب النسبة المئوية';
+    if (lang === "en") {
+      document.getElementById("language-toggle-btn").textContent =
+        "تبديل إلى العربية";
+      generateBtn.textContent = "Generate QR Code";
+      printBtn.textContent = "Print QR Code";
+      saveBtn.textContent = "Save QR Code";
+      openCameraBtn.textContent = "Open Camera";
+      percentageCalculatorBtn.textContent = "Calculate percentage";
+    } else if (lang === "ar") {
+      document.getElementById("language-toggle-btn").textContent =
+        "Switch to English";
+      generateBtn.textContent = "إنشاء رمز الاستجابة السريعة";
+      printBtn.textContent = "طباعة رمز الاستجابة السريعة";
+      saveBtn.textContent = "حفظ رمز الاستجابة السريعة";
+      openCameraBtn.textContent = "فتح الكاميرا";
+      percentageCalculatorBtn.textContent = "حساب النسبة المئوية";
     }
   }
 
   function getTextByLanguage(textKey) {
-    if (currentLanguage === 'en') {
+    if (currentLanguage === "en") {
       return langEn[textKey];
-    } else if (currentLanguage === 'ar') {
+    } else if (currentLanguage === "ar") {
       return langAr[textKey];
     }
   }

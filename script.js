@@ -43,38 +43,41 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Initialize HTML5 QR Code Scanner
     html5QrCode = new Html5Qrcode("reader");
+    let isScanned = false; // Flag to ensure alert is shown once
 
     html5QrCode
-          .start(
-      { facingMode: "environment" }, // Use rear camera
-      {
-        fps: 120, // Optional, frames per second for qr code scanning
-        qrbox: { width: 250, height: 250 }, // Optional, if you want bounded box UI
-        aspectRatio: 1 // Set aspect ratio to 1 for zoom effect (width equals height)
-      },
-      (qrCodeMessage) => {
-        navigator.vibrate(350); // Vibrate for 350 milliseconds
-        setTimeout(() => {
-          alert("Scanned: " + qrCodeMessage);
-          html5QrCode
-            .stop()
-            .then((ignore) => {
-              cameraContainer.style.display = "none"; // Hide the camera container
-            })
-            .catch((err) => {
-              console.error("Failed to stop camera:", err);
-            });
-        }, 300); // Delay the alert by 200 milliseconds
-      },
-      (errorMessage) => {
-        console.warn(`QR Code no longer in front of camera.`);
-      }
-    )
-    .catch((err) => {
-      console.error("Unable to start scanning:", err);
-    });
+        .start(
+            { facingMode: "environment" }, // Use rear camera
+            {
+                fps: 120, // Optional, frames per second for qr code scanning
+                qrbox: { width: 250, height: 250 }, // Optional, if you want bounded box UI
+                aspectRatio: 1 // Set aspect ratio to 1 for zoom effect (width equals height)
+            },
+            (qrCodeMessage) => {
+                if (!isScanned) {
+                    isScanned = true; // Set flag to true to prevent multiple alerts
+                    navigator.vibrate(350); // Vibrate for 350 milliseconds
+                    setTimeout(() => {
+                        alert("Scanned: " + qrCodeMessage);
+                        html5QrCode
+                            .stop()
+                            .then((ignore) => {
+                                cameraContainer.style.display = "none"; // Hide the camera container
+                            })
+                            .catch((err) => {
+                                console.error("Failed to stop camera:", err);
+                            });
+                    }, 200); // Delay the alert by 200 milliseconds
+                }
+            },
+            (errorMessage) => {
+                console.warn(`QR Code no longer in front of camera.`);
+            }
+        )
+        .catch((err) => {
+            console.error("Unable to start scanning:", err);
+        });
 }
-
   function generateQRCode() {
     const file = excelFileInput.files[0];
     if (!file) {

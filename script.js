@@ -45,18 +45,17 @@ document.addEventListener("DOMContentLoaded", function () {
     html5QrCode = new Html5Qrcode("reader");
 
     html5QrCode
-      .start(
-        { facingMode: "environment" }, // Use rear camera
-        {
-          fps: 120, // Optional, frames per second for qr code scanning
-          qrbox: { zoom:20, width: 250, height: 250 }, // Optional, if you want bounded box UI
-          aspectRatio: 1 // Set aspect ratio to 1 for zoom effect (width equals height)
-          
-        },
-        (qrCodeMessage) => {
-          navigator.vibrate(350); // Vibrate for 200 milliseconds
+          .start(
+      { facingMode: "environment" }, // Use rear camera
+      {
+        fps: 120, // Optional, frames per second for qr code scanning
+        qrbox: { width: 250, height: 250 }, // Optional, if you want bounded box UI
+        aspectRatio: 1 // Set aspect ratio to 1 for zoom effect (width equals height)
+      },
+      (qrCodeMessage) => {
+        navigator.vibrate(350); // Vibrate for 350 milliseconds
+        setTimeout(() => {
           alert("Scanned: " + qrCodeMessage);
-          // Here you can handle the scanned content, such as generating a QR code or barcode
           html5QrCode
             .stop()
             .then((ignore) => {
@@ -65,15 +64,16 @@ document.addEventListener("DOMContentLoaded", function () {
             .catch((err) => {
               console.error("Failed to stop camera:", err);
             });
-        },
-        (errorMessage) => {
-          console.warn(`QR Code no longer in front of camera.`);
-        }
-      )
-      .catch((err) => {
-        console.error("Unable to start scanning:", err);
-      });
-  }
+        }, 300); // Delay the alert by 200 milliseconds
+      },
+      (errorMessage) => {
+        console.warn(`QR Code no longer in front of camera.`);
+      }
+    )
+    .catch((err) => {
+      console.error("Unable to start scanning:", err);
+    });
+}
 
   function generateQRCode() {
     const file = excelFileInput.files[0];

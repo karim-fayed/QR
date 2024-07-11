@@ -49,7 +49,7 @@ document.addEventListener("DOMContentLoaded", function () {
         { facingMode: "environment" }, // Use rear camera
         {
           fps: 120, // Optional, frames per second for qr code scanning
-          qrbox: { zoom:5, width: 250, height: 250 }, // Optional, if you want bounded box UI
+          qrbox: { zoom:10, width: 250, height: 250 }, // Optional, if you want bounded box UI
           aspectRatio: 1 // Set aspect ratio to 1 for zoom effect (width equals height)
           
         },

@@ -60,9 +60,9 @@ document.addEventListener("DOMContentLoaded", function () {
           html5QrCode.start(
             cameraConfig, // Pass camera configuration object
             {
-              fps: 90, // Increase FPS for better scanning sensitivity
+              fps: 95, // Increase FPS for better scanning sensitivity
               qrbox: { width: 300, height: 300 },
-              aspectRatio: 3,
+              aspectRatio: 1,
               zoom: 3 // Increase zoom level to 1.5
             },
             qrCodeMessage => {

@@ -82,27 +82,39 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 });
 
-// Function to toggle UI elements based on language
+// Refactored function to toggle UI elements based on language
 function toggleLanguage(lang) {
-    if (lang === 'en') {
-        document.getElementById('language-toggle-btn').textContent = 'تبديل إلى العربية';
-        document.getElementById('back-btn').textContent = 'Back to Home Page';
-        document.getElementById('percentageForm').querySelector('label[for="amount"]').textContent = 'Enter Amount';
-        document.getElementById('percentageForm').querySelector('label[for="percentage"]').textContent = 'Enter Percentage';
-        document.getElementById('percentageForm').querySelector('label[for="operation"]').textContent = 'Choose Operation';
-        document.getElementById('percentageForm').querySelector('option[value="extract"]').textContent = 'Extract Percentage Only';
-        document.getElementById('percentageForm').querySelector('option[value="subtract"]').textContent = 'Extract and Subtract Percentage';
-        document.getElementById('percentageForm').querySelector('option[value="add"]').textContent = 'Extract and Add Percentage';
-        document.getElementById('percentageForm').querySelector('button[type="submit"]').textContent = 'Calculate';
-    } else if (lang === 'ar') {
-        document.getElementById('language-toggle-btn').textContent = 'Switch to English';
-        document.getElementById('back-btn').textContent = 'الرجوع إلى الصفحة الرئيسية';
-        document.getElementById('percentageForm').querySelector('label[for="amount"]').textContent = 'أدخل المبلغ';
-        document.getElementById('percentageForm').querySelector('label[for="percentage"]').textContent = 'أدخل النسبة المئوية';
-        document.getElementById('percentageForm').querySelector('label[for="operation"]').textContent = 'اختر العملية';
-        document.getElementById('percentageForm').querySelector('option[value="extract"]').textContent = 'استخراج النسبة من المبلغ فقط';
-        document.getElementById('percentageForm').querySelector('option[value="subtract"]').textContent = 'استخراج النسبة وطرحها من المبلغ';
-        document.getElementById('percentageForm').querySelector('option[value="add"]').textContent = 'استخراج النسبة واضافتها إلى المبلغ';
-        document.getElementById('percentageForm').querySelector('button[type="submit"]').textContent = 'احسب';
-    }
+    const labels = {
+        amount: { en: 'Enter Amount', ar: 'أدخل المبلغ' },
+        percentage: { en: 'Enter Percentage', ar: 'أدخل النسبة المئوية' },
+        operation: { en: 'Choose Operation', ar: 'اختر العملية' }
+    };
+
+    const operations = {
+        en: {
+            extract: 'Extract Percentage Only',
+            subtract: 'Extract and Subtract Percentage',
+            add: 'Extract and Add Percentage'
+        },
+        ar: {
+            extract: 'استخراج النسبة من المبلغ فقط',
+            subtract: 'استخراج النسبة وطرحها من المبلغ',
+            add: 'استخراج النسبة واضافتها إلى المبلغ'
+        }
+    };
+
+    const buttons = {
+        en: { calculate: 'Calculate', back: 'Back to Home Page' },
+        ar: { calculate: 'احسب', back: 'الرجوع إلى الصفحة الرئيسية' }
+    };
+
+    document.getElementById('language-toggle-btn').textContent = lang === 'en' ? 'تبديل إلى العربية' : 'Switch to English';
+    document.getElementById('back-btn').textContent = buttons[lang].back;
+    document.getElementById('percentageForm').querySelector('label[for="amount"]').textContent = labels.amount[lang];
+    document.getElementById('percentageForm').querySelector('label[for="percentage"]').textContent = labels.percentage[lang];
+    document.getElementById('percentageForm').querySelector('label[for="operation"]').textContent = labels.operation[lang];
+    document.getElementById('percentageForm').querySelectorAll('option').forEach(option => {
+        option.textContent = operations[lang][option.value];
+    });
+    document.getElementById('percentageForm').querySelector('button[type="submit"]').textContent = buttons[lang].calculate;
 }

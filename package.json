@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "html5-qrcode": "^2.3.8",
     "number-to-arabic-words": "^1.5.3"
   }
 }

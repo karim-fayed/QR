@@ -1,1 +1,59 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>QR Generator for Excel</title><link rel="icon" href="favicon.ico" type="image/x-icon"><link rel="stylesheet" href="styles.css"><script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" integrity="sha512-r22gChDnGvBylk90+2e/ycr3RVrDi8DIOkIGNhJlKfuyQM4tIRAI062MaV8sfjQKYVGjOBaZBOA87z+IhZE9DA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><script src="E:\progect test\projects\QRweb\qrtest\node_modules\html5-qrcode\html5-qrcode.min.js"></script><script src="script.JS" defer="defer"></script><style>body{background-image:url(https://k.top4top.io/p_3037sts6b1.png);background-size:cover;background-repeat:no-repeat}</style></head><body><div class="container"><h1 class="title">QR Generator for Excel</h1><form class="qr-container"><div id="qr-code" class="qr-code"></div><div id="item-name" class="item-name"></div><label for="excel-file">Choose Excel File</label> <input type="file" id="excel-file" accept=".xlsx"> <label for="item-select">Select Item:</label> <select id="item-select" class="input"><option value="">-- Select Item --</option></select> <button type="button" id="generate-btn" class="btn">Generate QR Code</button> <button type="button" id="print-btn" class="btn">Print QR Code</button> <button type="button" id="save-btn" class="btn">Save QR Code</button> <button type="button" id="open-camera-btn" class="btn">Open Camera</button> <button type="button" id="percentage-calculator-btn" class="btn">Calculate percentage</button> <button type="button" id="language-toggle-btn" class="side-button">Switch to English</button><div><a href="template.xlsx" download="example.xlsx">Download Excel Template</a></div></form><div id="camera-container" style="display:none"><div id="reader" width="600px"></div></div><div id="result"></div><div class="moving-text">*𝓚𝓐𝓡𝓘𝓜𝓐𝓗𝓜𝓔𝓓*</div></div></body></html>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QR Generator for Excel</title>
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="styles.css">
+  <script
+  src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" integrity="sha512-r22gChDnGvBylk90+2e/ycr3RVrDi8DIOkIGNhJlKfuyQM4tIRAI062MaV8sfjQKYVGjOBaZBOA87z+IhZE9DA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="E:\progect test\projects\QRweb\qrtest\node_modules\html5-qrcode\html5-qrcode.min.js"></script>
+
+
+  <!--<script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script> --> 
+  <script src="script.obfuscated.js" defer></script>
+  <style>
+    body {
+      background-image: url('https://k.top4top.io/p_3037sts6b1.png');
+      background-size: cover;
+      background-repeat: no-repeat;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1 class="title">QR Generator for Excel</h1>
+    <form class="qr-container">
+      <div id="qr-code" class="qr-code"></div>
+      <div id="item-name" class="item-name"></div>
+      <label for="excel-file">Choose Excel File</label>
+      <input type="file" id="excel-file" accept=".xlsx">
+      <label for="item-select">Select Item:</label>
+      <select id="item-select" class="input">
+        <option value="">-- Select Item --</option>
+      </select>
+
+      <button type="button" id="generate-btn" class="btn">Generate QR Code</button>
+      <button type="button" id="print-btn" class="btn">Print QR Code</button>
+      <button type="button" id="save-btn" class="btn">Save QR Code</button>
+      <button type="button" id="open-camera-btn" class="btn">Open Camera</button>
+      <button type="button" id="percentage-calculator-btn" class="btn">Calculate percentage</button>
+      <button type="button" id="language-toggle-btn" class="side-button">Switch to English</button>
+      <div>
+        <!-- <p>Download the Excel template</p> -->
+        <a href="template.xlsx" download="example.xlsx">Download Excel Template</a>
+      </div>
+    </form>
+    <div id="camera-container" style="display: none;">
+      <div id="reader" width="600px"></div>
+    </div>
+    <div id="result"></div>
+    <div class="moving-text">*𝓚𝓐𝓡𝓘𝓜𝓐𝓗𝓜𝓔𝓓*</div>
+  </div>
+</body>
+
+</html>

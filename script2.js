@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-function openCamera() {
+    function openCamera() {
         // Show camera container
         cameraContainer.style.display = 'block';
 
@@ -63,47 +63,40 @@ function openCamera() {
             return;
         }
 
-        // Prepare camera configuration object
-        const cameraConfig = {
-            facingMode: 'environment', // Use 'environment' for rear-facing camera
-            zoom: 20, // Increase zoom level for better scanning
-            width: 640, // Image width
-            height: 480 // Image height
-        };
-
-        navigator.mediaDevices.getUserMedia({ video: cameraConfig })
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
             .then(function (stream) {
-                // Start QR code scanning if scanningActive is true
+                // Get the stream track and its settings
+                const track = stream.getVideoTracks()[0];
+                const settings = track.getSettings();
+                const constraints = {
+                    facingMode: 'environment',
+                    width: settings.width,
+                    height: settings.height
+                };
+
+                // Start QR code scanning
                 html5QrCode.start(
-                    cameraConfig,
+                    constraints,
                     {
-                        fps: 120, // Increase FPS for better scanning sensitivity
-                        qrbox: { width: 280, height: 280 },
-                        aspectRatio: 1
+                        fps: 10, // Frames per second
+                        qrbox: { width: 250, height: 250 } // QR box size
                     },
                     qrCodeMessage => {
-                        // Check if scanning is still active
                         if (scanningActive) {
-                            // Vibrate to signal QR code scan
                             navigator.vibrate(350);
-
-                            // Delay before showing the scanned message
                             setTimeout(() => {
                                 alert('QR Code scanned: ' + qrCodeMessage);
-
-                                // Stop scanning after successful scan
                                 html5QrCode.stop().then(() => {
                                     cameraContainer.style.display = 'none';
                                     scanningActive = false;
                                 }).catch(err => {
                                     console.error('Failed to stop scanning:', err);
                                 });
-                            }, 300); // Delay the alert by 300 milliseconds
+                            }, 300);
                         }
                     },
                     errorMessage => {
                         console.warn('No QR Code found in front of the camera.');
-                        scanningActive = false;
                     }
                 ).catch(err => {
                     console.error('Failed to start scanning:', err);
@@ -119,8 +112,7 @@ function openCamera() {
                     alert('Error accessing the camera: ' + err.message);
                 }
             });
-}
-
+    }
 
   function generateQRCode() {
     const file = excelFileInput.files[0];

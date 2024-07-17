@@ -78,15 +78,15 @@ document.addEventListener("DOMContentLoaded", function () {
                 html5QrCode.start(
                     cameraConfig, // Pass camera configuration object
                     {
-                        fps: 90, // Increase FPS for better scanning sensitivity
+                        fps: 120, // Increase FPS for better scanning sensitivity
                         qrbox: { width: 300, height: 300 },
-                        aspectRatio: 3,
-                        zoom: 3 // Increase zoom level to 1.5
+                        aspectRatio: 1,
+                        zoom: 5 // Increase zoom level to 1.5
                     },
                     qrCodeMessage => {
                         // Check if scanning is still active
                         if (scanningActive) {
-                            navigator.vibrate(250); // Vibrate to signal QR code scan
+                            navigator.vibrate(350); // Vibrate to signal QR code scan
                             alert('QR Code scanned: ' + qrCodeMessage);
 
                             // Stop scanning after successful scan

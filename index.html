@@ -11,10 +11,17 @@
   <!-- Uncomment if using ZXing for QR code scanning -->
   <script src="https://unpkg.com/@zxing/library@0.18.4"></script> 
   <!-- Include Html5Qrcode or other QR code scanning library -->
-  <script src="./html5-qrcode.min.js"></script> 
+  <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
   <script src="./qrcode.min.js"></script>
-  <script src="./script2.js"></script>
   <style>
+    #camera-container {
+      display: none;
+    }
+    #reader {
+      width: 300px;
+      height: 300px;
+      margin: 0 auto;
+    }
     body {
       background-image: url('https://k.top4top.io/p_3037sts6b1.png');
       background-size: cover;
@@ -34,7 +41,6 @@
       <select id="item-select" class="input">
         <option value="">-- Select Item --</option>
       </select>
-
       <button type="button" id="generate-btn" class="btn">Generate QR Code</button>
       <button type="button" id="print-btn" class="btn">Print QR Code</button>
       <button type="button" id="save-btn" class="btn">Save QR Code</button>
@@ -45,12 +51,13 @@
         <a href="template.xlsx" download="example.xlsx">Download Excel Template</a>
       </div>
     </form>
-    <div id="camera-container" style="display: none;">
+    <div id="camera-container">
       <!--<video id="video" autoplay playsinline style="height: auto;"></video>-->
-      <div id="reader" width="600px"></div>
+      <div id="reader"></div>
     </div>
     <div id="result"></div>
     <div class="moving-text">*𝓚𝓐𝓡𝓘𝓜𝓐𝓗𝓜𝓔𝓓*</div>
   </div>
+  <script src="./script2.js"></script>
 </body>
 </html>

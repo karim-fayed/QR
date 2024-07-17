@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", function () {
     height: 480 // Image height
   };
 
-  function openCamera() {
+function openCamera() {
     // Show camera container
     cameraContainer.style.display = 'block';
 
@@ -87,15 +87,19 @@ document.addEventListener("DOMContentLoaded", function () {
                         // Check if scanning is still active
                         if (scanningActive) {
                             navigator.vibrate(350); // Vibrate to signal QR code scan
-                            alert('QR Code scanned: ' + qrCodeMessage);
+                            
+                            // Delay before showing the scanned message
+                            setTimeout(() => {
+                                alert('QR Code scanned: ' + qrCodeMessage);
 
-                            // Stop scanning after successful scan
-                            html5QrCode.stop().then(ignore => {
-                                cameraContainer.style.display = 'none'; // Hide container after completion
-                                scanningActive = false; // Set scanningActive to false
-                            }).catch(err => {
-                                console.error('Failed to stop camera:', err);
-                            });
+                                // Stop scanning after successful scan
+                                html5QrCode.stop().then(ignore => {
+                                    cameraContainer.style.display = 'none'; // Hide container after completion
+                                    scanningActive = false; // Set scanningActive to false
+                                }).catch(err => {
+                                    console.error('Failed to stop camera:', err);
+                                });
+                            }, 300); // Delay the alert by 300 milliseconds
                         }
                     },
                     errorMessage => {

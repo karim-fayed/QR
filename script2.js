@@ -78,16 +78,17 @@ function openCamera() {
                 html5QrCode.start(
                     cameraConfig, // Pass camera configuration object
                     {
-                        fps: 120, // Increase FPS for better scanning sensitivity
+                        fps: 60, // Increase FPS for better scanning sensitivity
                         qrbox: { width: 280, height: 280 },
                         aspectRatio: 1,
-                        zoom: 5 // Increase zoom level to 1.5
+                        zoom: 2 // Increase zoom level for better scanning
                     },
                     qrCodeMessage => {
                         // Check if scanning is still active
                         if (scanningActive) {
-                            navigator.vibrate(350); // Vibrate to signal QR code scan
-                            
+                            // Vibrate to signal QR code scan
+                            navigator.vibrate(350);
+
                             // Delay before showing the scanned message
                             setTimeout(() => {
                                 alert('QR Code scanned: ' + qrCodeMessage);
@@ -122,6 +123,7 @@ function openCamera() {
             }
         });
 }
+
 
 
 

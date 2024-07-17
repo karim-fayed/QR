@@ -12,7 +12,8 @@ document.addEventListener("DOMContentLoaded", function () {
   const itemSelect = document.getElementById("item-select");
   let workbook;
   let html5QrCode;
-
+  let scanningActive = false; // Initialize scanningActive as false initially
+  
   // Load language preference from localStorage
   let currentLanguage = localStorage.getItem("currentLanguage") || "en";
   toggleLanguage(currentLanguage);
@@ -47,17 +48,18 @@ function openCamera() {
         html5QrCode = new Html5Qrcode("reader");
     } else {
         // Stop previous scanning if it's active
-        if (typeof scanningActive !== 'undefined' && scanningActive) {
+        if (scanningActive) {
             html5QrCode.stop().then(() => {
                 console.log('Previous scanning stopped successfully.');
+                scanningActive = false; // Set scanningActive to false after stopping
             }).catch(err => {
                 console.error('Failed to stop previous scanning:', err);
             });
         }
     }
 
-    // Flag to track if scanning is active
-    let scanningActive = true;
+    // Set scanningActive to true before starting scanning
+    scanningActive = true;
 
     // Check for getUserMedia support in the browser
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
@@ -66,46 +68,51 @@ function openCamera() {
         return;
     }
 
+    // Prepare camera configuration object
+    const cameraConfig = {
+        facingMode: 'environment', // Use 'environment' for rear-facing camera
+        zoom: 20, // Increase zoom level for better scanning
+        width: 640, // Image width
+        height: 480 // Image height
+    };
+
     navigator.mediaDevices.getUserMedia({ video: cameraConfig })
         .then(function (stream) {
             // Start QR code scanning if scanningActive is true
-            if (scanningActive) {
-                html5QrCode.start(
-                    cameraConfig, // Pass camera configuration object
-                    {
-                        fps: 120, // Increase FPS for better scanning sensitivity
-                        qrbox: { width: 280, height: 280 },
-                        aspectRatio: 1,
-                        zoom: 20 // Increase zoom level for better scanning
-                    },
-                    qrCodeMessage => {
-                        // Check if scanning is still active
-                        if (scanningActive) {
-                            // Vibrate to signal QR code scan
-                            navigator.vibrate(350);
+            html5QrCode.start(
+                cameraConfig, // Pass camera configuration object
+                {
+                    fps: 120, // Increase FPS for better scanning sensitivity
+                    qrbox: { width: 280, height: 280 },
+                    aspectRatio: 1
+                },
+                qrCodeMessage => {
+                    // Check if scanning is still active
+                    if (scanningActive) {
+                        // Vibrate to signal QR code scan
+                        navigator.vibrate(350);
 
-                            // Delay before showing the scanned message
-                            setTimeout(() => {
-                                alert('QR Code scanned: ' + qrCodeMessage);
+                        // Delay before showing the scanned message
+                        setTimeout(() => {
+                            alert('QR Code scanned: ' + qrCodeMessage);
 
-                                // Stop scanning after successful scan
-                                html5QrCode.stop().then(ignore => {
-                                    cameraContainer.style.display = 'none'; // Hide container after completion
-                                    scanningActive = false; // Set scanningActive to false
-                                }).catch(err => {
-                                    console.error('Failed to stop camera:', err);
-                                });
-                            }, 300); // Delay the alert by 300 milliseconds
-                        }
-                    },
-                    errorMessage => {
-                        console.warn('No QR Code found in front of the camera.');
-                        scanningActive = false; // Set scanningActive to false on error
+                            // Stop scanning after successful scan
+                            html5QrCode.stop().then(ignore => {
+                                cameraContainer.style.display = 'none'; // Hide container after completion
+                                scanningActive = false; // Set scanningActive to false
+                            }).catch(err => {
+                                console.error('Failed to stop camera:', err);
+                            });
+                        }, 300); // Delay the alert by 300 milliseconds
                     }
-                ).catch(err => {
-                    console.error('Failed to start scanning:', err);
-                });
-            }
+                },
+                errorMessage => {
+                    console.warn('No QR Code found in front of the camera.');
+                    scanningActive = false; // Set scanningActive to false on error
+                }
+            ).catch(err => {
+                console.error('Failed to start scanning:', err);
+            });
         })
         .catch(err => {
             console.error('Error accessing camera:', err);

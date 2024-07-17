@@ -79,7 +79,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     cameraConfig, // Pass camera configuration object
                     {
                         fps: 120, // Increase FPS for better scanning sensitivity
-                        qrbox: { width: 300, height: 300 },
+                        qrbox: { width: 280, height: 280 },
                         aspectRatio: 1,
                         zoom: 5 // Increase zoom level to 1.5
                     },

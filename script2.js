@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // Check if Html5Qrcode instance already exists
         if (!html5QrCode) {
             // Create new Html5Qrcode instance
-            html5QrCode = new Html5Qrcode("reader");
+            html5QrCode = new Html5QrCode("reader");
         } else {
             // Stop previous scanning if it's active
             if (scanningActive) {
@@ -63,57 +63,34 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
-            .then(function (stream) {
-                // Get the stream track and its settings
-                const track = stream.getVideoTracks()[0];
-                const settings = track.getSettings();
-                const constraints = {
-                    facingMode: 'environment',
-                    width: settings.width,
-                    height: settings.height
-                };
-
-                // Start QR code scanning
-                html5QrCode.start(
-                    constraints,
-                    {
-                        fps: 10, // Frames per second
-                        qrbox: { width: 250, height: 250 } // QR box size
-                    },
-                    qrCodeMessage => {
-                        if (scanningActive) {
-                            navigator.vibrate(350);
-                            setTimeout(() => {
-                                alert('QR Code scanned: ' + qrCodeMessage);
-                                html5QrCode.stop().then(() => {
-                                    cameraContainer.style.display = 'none';
-                                    scanningActive = false;
-                                }).catch(err => {
-                                    console.error('Failed to stop scanning:', err);
-                                });
-                            }, 300);
-                        }
-                    },
-                    errorMessage => {
-                        console.warn('No QR Code found in front of the camera.');
-                    }
-                ).catch(err => {
-                    console.error('Failed to start scanning:', err);
-                });
-            })
-            .catch(err => {
-                console.error('Error accessing camera:', err);
-                if (err.name === 'NotAllowedError') {
-                    alert('Permission to access the camera was denied. Please allow access to use the camera.');
-                } else if (err.name === 'NotFoundError') {
-                    alert('No camera found. Please ensure your device has a camera.');
-                } else {
-                    alert('Error accessing the camera: ' + err.message);
+        // Start QR code scanning
+        html5QrCode.start(
+            { facingMode: 'environment' },
+            {
+                fps: 10, // Frames per second
+                qrbox: { width: 250, height: 250 } // QR box size
+            },
+            qrCodeMessage => {
+                if (scanningActive) {
+                    navigator.vibrate(350);
+                    setTimeout(() => {
+                        alert('QR Code scanned: ' + qrCodeMessage);
+                        html5QrCode.stop().then(() => {
+                            cameraContainer.style.display = 'none';
+                            scanningActive = false;
+                        }).catch(err => {
+                            console.error('Failed to stop scanning:', err);
+                        });
+                    }, 300);
                 }
-            });
+            },
+            errorMessage => {
+                console.warn('No QR Code found in front of the camera.');
+            }
+        ).catch(err => {
+            console.error('Failed to start scanning:', err);
+        });
     }
-
   function generateQRCode() {
     const file = excelFileInput.files[0];
     if (!file) {

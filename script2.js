@@ -47,7 +47,7 @@ function openCamera() {
         html5QrCode = new Html5Qrcode("reader");
     } else {
         // Stop previous scanning if it's active
-        if (scanningActive) {
+        if (typeof scanningActive !== 'undefined' && scanningActive) {
             html5QrCode.stop().then(() => {
                 console.log('Previous scanning stopped successfully.');
             }).catch(err => {
@@ -56,20 +56,15 @@ function openCamera() {
         }
     }
 
+    // Flag to track if scanning is active
+    let scanningActive = true;
+
     // Check for getUserMedia support in the browser
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         console.error('getUserMedia is not supported in this browser');
         alert('getUserMedia is not supported in this browser');
         return;
     }
-
-    // Prepare camera configuration object
-    const cameraConfig = {
-        facingMode: 'environment' // Use 'environment' for rear-facing camera
-    };
-
-    // Flag to track if scanning is active
-    let scanningActive = true;
 
     navigator.mediaDevices.getUserMedia({ video: cameraConfig })
         .then(function (stream) {
@@ -123,8 +118,6 @@ function openCamera() {
             }
         });
 }
-
-
 
 
   function generateQRCode() {

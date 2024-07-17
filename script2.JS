@@ -38,45 +38,88 @@ document.addEventListener("DOMContentLoaded", function () {
   };
 
   function openCamera() {
-    cameraContainer.style.display = "block"; // Show the camera container
+    // Show camera container
+    cameraContainer.style.display = 'block';
 
-    // Initialize HTML5 QR Code Scanner
-    html5QrCode = new Html5Qrcode("reader");
-
-    html5QrCode
-      .start(
-        { facingMode: "environment" }, // Use rear camera
-        {
-          fps: 120, // Optional, frames per second for qr code scanning
-          qrbox: { width: 250, height: 250 }, // Optional, if you want bounded box UI
-          aspectRatio: 1 // Set aspect ratio to 1 for zoom effect (width equals height)
-        },
-        (qrCodeMessage) => {
-          // تحقق مما إذا كان الرمز قد تم مسحه بالفعل
-          if (!scannedQRCodes.has(qrCodeMessage)) {
-            scannedQRCodes.add(qrCodeMessage); // أضف الرمز إلى المجموعة
-            navigator.vibrate(350); // Vibrate for 350 milliseconds
-            setTimeout(() => {
-              alert("Scanned: " + qrCodeMessage);
-              html5QrCode
-                .stop()
-                .then((ignore) => {
-                  cameraContainer.style.display = "none"; // Hide the camera container
-                })
-                .catch((err) => {
-                  console.error("Failed to stop camera:", err);
-                });
-            }, 300); // Delay the alert by 200 milliseconds
-          }
-        },
-        (errorMessage) => {
-          console.warn(`QR Code no longer in front of camera.`);
+    // Check if Html5Qrcode instance already exists
+    if (!html5QrCode) {
+        // Create new Html5Qrcode instance
+        html5QrCode = new Html5Qrcode("reader");
+    } else {
+        // Stop previous scanning if it's active
+        if (scanningActive) {
+            html5QrCode.stop().then(() => {
+                console.log('Previous scanning stopped successfully.');
+            }).catch(err => {
+                console.error('Failed to stop previous scanning:', err);
+            });
         }
-      )
-      .catch((err) => {
-        console.error("Unable to start scanning:", err);
-      });
-  }
+    }
+
+    // Check for getUserMedia support in the browser
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        console.error('getUserMedia is not supported in this browser');
+        alert('getUserMedia is not supported in this browser');
+        return;
+    }
+
+    // Prepare camera configuration object
+    const cameraConfig = {
+        facingMode: 'environment' // Use 'environment' for rear-facing camera
+    };
+
+    // Flag to track if scanning is active
+    let scanningActive = true;
+
+    navigator.mediaDevices.getUserMedia({ video: cameraConfig })
+        .then(function (stream) {
+            // Start QR code scanning if scanningActive is true
+            if (scanningActive) {
+                html5QrCode.start(
+                    cameraConfig, // Pass camera configuration object
+                    {
+                        fps: 90, // Increase FPS for better scanning sensitivity
+                        qrbox: { width: 300, height: 300 },
+                        aspectRatio: 3,
+                        zoom: 3 // Increase zoom level to 1.5
+                    },
+                    qrCodeMessage => {
+                        // Check if scanning is still active
+                        if (scanningActive) {
+                            navigator.vibrate(250); // Vibrate to signal QR code scan
+                            alert('QR Code scanned: ' + qrCodeMessage);
+
+                            // Stop scanning after successful scan
+                            html5QrCode.stop().then(ignore => {
+                                cameraContainer.style.display = 'none'; // Hide container after completion
+                                scanningActive = false; // Set scanningActive to false
+                            }).catch(err => {
+                                console.error('Failed to stop camera:', err);
+                            });
+                        }
+                    },
+                    errorMessage => {
+                        console.warn('No QR Code found in front of the camera.');
+                        scanningActive = false; // Set scanningActive to false on error
+                    }
+                ).catch(err => {
+                    console.error('Failed to start scanning:', err);
+                });
+            }
+        })
+        .catch(err => {
+            console.error('Error accessing camera:', err);
+            if (err.name === 'NotAllowedError') {
+                alert('Permission to access the camera was denied. Please allow access to use the camera.');
+            } else if (err.name === 'NotFoundError') {
+                alert('No camera found. Please ensure your device has a camera.');
+            } else {
+                alert('Error accessing the camera: ' + err.message);
+            }
+        });
+}
+
+
 
   function generateQRCode() {
     const file = excelFileInput.files[0];
@@ -161,7 +204,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 <title>Generated QR Code</title>
                 <style>
                     body { font-family: Arial, sans-serif; margin: 20px; text-align: center; }
-                    .qr-code { width: 150px; height: 150px; padding-top: 40px; margin: auto; }
+                    .qr-code { width: 150px; height: 150px; padding-top: 30px; margin: auto; }
                     .item-name { text-align: center; margin-top: -10px; font-size: 10px; font-weight: bold; }
                 </style>
             </head>
@@ -171,11 +214,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     <img src="${qrCodeImageSrc}" alt="QR Code">
                 </div>
                 <div class="item-name">${itemName}</div>
-                <script>
-                   window.onload = function() {
-                    window.print();
-                   };
-                </script>
             </body>
             </html>
         `);
@@ -226,11 +264,6 @@ document.addEventListener("DOMContentLoaded", function () {
         <div class="qr-codes-container">
           ${qrCodesHTML}
         </div>
-        <script>
-            window.onload = function() {
-                window.print();
-            };
-        </script>
       </body>
       </html>
     `);
@@ -238,9 +271,6 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function printQRCode() {
-    // You would need to modify this part based on your html2canvas setup
-    const qrCodeDiv = document.querySelector('.qr-codes-container');
-
     html2canvas(qrCodeDiv).then((canvas) => {
       const imageData = canvas.toDataURL("image/png");
 
@@ -257,39 +287,17 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function saveQRCode() {
-    const qrCodeDivs = document.querySelectorAll('.qr-code-container');
+    html2canvas(qrCodeDiv).then((canvas) => {
+      const imageData = canvas.toDataURL("image/png");
 
-    if (qrCodeDivs.length === 0) {
-        console.error("No QR codes to save");
-        alert("No QR codes to save.");
-        return;
-    }
-
-    qrCodeDivs.forEach((qrCodeDiv, index) => {
-        const itemName = qrCodeDiv.querySelector('.item-name').innerText;
-        const qrCodeImageSrc = qrCodeDiv.querySelector('.qr-code img').src;
-
-        // Create a new image element to draw and save
-        const img = new Image();
-        img.crossOrigin = "Anonymous";
-        img.onload = function () {
-            const canvas = document.createElement('canvas');
-            canvas.width = img.width;
-            canvas.height = img.height;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0);
-
-            // Create a download link for the image
-            const downloadLink = document.createElement("a");
-            downloadLink.href = canvas.toDataURL("image/png");
-            downloadLink.download = `QRCode_${itemName}_${index + 1}.png`; // Add index to differentiate files
-            downloadLink.click();
-        };
-        img.src = qrCodeImageSrc;
+      // Create a download link for the image
+      const downloadLink = document.createElement("a");
+      downloadLink.href = imageData;
+      downloadLink.download = "QRCode.png";
+      downloadLink.click();
     });
-}
+  }
 
-  // Language toggle functionality
   const langEn = {
     selectFileAlert: "Please select a file.",
     selectItem: "--Select an item--"

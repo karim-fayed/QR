@@ -37,10 +37,10 @@ document.addEventListener("DOMContentLoaded", function () {
         // Show camera container
         cameraContainer.style.display = 'block';
 
-        // Check if Html5Qrcode instance already exists
+        // Check if Html5QrCode instance already exists
         if (!html5QrCode) {
-            // Create new Html5Qrcode instance
-            html5QrCode = new Html5QrCode("reader");
+            // Create new Html5QrCode instance
+            html5QrCode = new Html5Qrcode("reader");
         } else {
             // Stop previous scanning if it's active
             if (scanningActive) {

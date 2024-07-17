@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-    function openCamera() {
+function openCamera() {
         // Show camera container
         cameraContainer.style.display = 'block';
 
@@ -119,7 +119,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     alert('Error accessing the camera: ' + err.message);
                 }
             });
-    }
+}
 
 
   function generateQRCode() {

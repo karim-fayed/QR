@@ -31,100 +31,95 @@ document.addEventListener("DOMContentLoaded", function () {
     toggleLanguage(currentLanguage);
   });
 
-  const cameraConfig = {
-    facingMode: "environment", // 'user' for front camera
-    zoom: 10, // Increase zoom level
-    width: 640, // Image width
-    height: 480 // Image height
-  };
 
-function openCamera() {
-    // Show camera container
-    cameraContainer.style.display = 'block';
 
-    // Check if Html5Qrcode instance already exists
-    if (!html5QrCode) {
-        // Create new Html5Qrcode instance
-        html5QrCode = new Html5Qrcode("reader");
-    } else {
-        // Stop previous scanning if it's active
-        if (scanningActive) {
-            html5QrCode.stop().then(() => {
-                console.log('Previous scanning stopped successfully.');
-                scanningActive = false; // Set scanningActive to false after stopping
-            }).catch(err => {
-                console.error('Failed to stop previous scanning:', err);
-            });
-        }
-    }
+    function openCamera() {
+        // Show camera container
+        cameraContainer.style.display = 'block';
 
-    // Set scanningActive to true before starting scanning
-    scanningActive = true;
-
-    // Check for getUserMedia support in the browser
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        console.error('getUserMedia is not supported in this browser');
-        alert('getUserMedia is not supported in this browser');
-        return;
-    }
-
-    // Prepare camera configuration object
-    const cameraConfig = {
-        facingMode: 'environment', // Use 'environment' for rear-facing camera
-        zoom: 20, // Increase zoom level for better scanning
-        width: 640, // Image width
-        height: 480 // Image height
-    };
-
-    navigator.mediaDevices.getUserMedia({ video: cameraConfig })
-        .then(function (stream) {
-            // Start QR code scanning if scanningActive is true
-            html5QrCode.start(
-                cameraConfig, // Pass camera configuration object
-                {
-                    fps: 120, // Increase FPS for better scanning sensitivity
-                    qrbox: { width: 280, height: 280 },
-                    aspectRatio: 1
-                },
-                qrCodeMessage => {
-                    // Check if scanning is still active
-                    if (scanningActive) {
-                        // Vibrate to signal QR code scan
-                        navigator.vibrate(350);
-
-                        // Delay before showing the scanned message
-                        setTimeout(() => {
-                            alert('QR Code scanned: ' + qrCodeMessage);
-
-                            // Stop scanning after successful scan
-                            html5QrCode.stop().then(ignore => {
-                                cameraContainer.style.display = 'none'; // Hide container after completion
-                                scanningActive = false; // Set scanningActive to false
-                            }).catch(err => {
-                                console.error('Failed to stop camera:', err);
-                            });
-                        }, 300); // Delay the alert by 300 milliseconds
-                    }
-                },
-                errorMessage => {
-                    console.warn('No QR Code found in front of the camera.');
-                    scanningActive = false; // Set scanningActive to false on error
-                }
-            ).catch(err => {
-                console.error('Failed to start scanning:', err);
-            });
-        })
-        .catch(err => {
-            console.error('Error accessing camera:', err);
-            if (err.name === 'NotAllowedError') {
-                alert('Permission to access the camera was denied. Please allow access to use the camera.');
-            } else if (err.name === 'NotFoundError') {
-                alert('No camera found. Please ensure your device has a camera.');
-            } else {
-                alert('Error accessing the camera: ' + err.message);
+        // Check if Html5Qrcode instance already exists
+        if (!html5QrCode) {
+            // Create new Html5Qrcode instance
+            html5QrCode = new Html5Qrcode("reader");
+        } else {
+            // Stop previous scanning if it's active
+            if (scanningActive) {
+                html5QrCode.stop().then(() => {
+                    console.log('Previous scanning stopped successfully.');
+                    scanningActive = false;
+                }).catch(err => {
+                    console.error('Failed to stop previous scanning:', err);
+                });
             }
-        });
-}
+        }
+
+        // Set scanningActive to true before starting scanning
+        scanningActive = true;
+
+        // Check for getUserMedia support in the browser
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            console.error('getUserMedia is not supported in this browser');
+            alert('getUserMedia is not supported in this browser');
+            return;
+        }
+
+        // Prepare camera configuration object
+        const cameraConfig = {
+            facingMode: 'environment', // Use 'environment' for rear-facing camera
+            zoom: 20, // Increase zoom level for better scanning
+            width: 640, // Image width
+            height: 480 // Image height
+        };
+
+        navigator.mediaDevices.getUserMedia({ video: cameraConfig })
+            .then(function (stream) {
+                // Start QR code scanning if scanningActive is true
+                html5QrCode.start(
+                    cameraConfig,
+                    {
+                        fps: 120, // Increase FPS for better scanning sensitivity
+                        qrbox: { width: 280, height: 280 },
+                        aspectRatio: 1
+                    },
+                    qrCodeMessage => {
+                        // Check if scanning is still active
+                        if (scanningActive) {
+                            // Vibrate to signal QR code scan
+                            navigator.vibrate(350);
+
+                            // Delay before showing the scanned message
+                            setTimeout(() => {
+                                alert('QR Code scanned: ' + qrCodeMessage);
+
+                                // Stop scanning after successful scan
+                                html5QrCode.stop().then(() => {
+                                    cameraContainer.style.display = 'none';
+                                    scanningActive = false;
+                                }).catch(err => {
+                                    console.error('Failed to stop scanning:', err);
+                                });
+                            }, 300); // Delay the alert by 300 milliseconds
+                        }
+                    },
+                    errorMessage => {
+                        console.warn('No QR Code found in front of the camera.');
+                        scanningActive = false;
+                    }
+                ).catch(err => {
+                    console.error('Failed to start scanning:', err);
+                });
+            })
+            .catch(err => {
+                console.error('Error accessing camera:', err);
+                if (err.name === 'NotAllowedError') {
+                    alert('Permission to access the camera was denied. Please allow access to use the camera.');
+                } else if (err.name === 'NotFoundError') {
+                    alert('No camera found. Please ensure your device has a camera.');
+                } else {
+                    alert('Error accessing the camera: ' + err.message);
+                }
+            });
+    }
 
 
   function generateQRCode() {

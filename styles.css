@@ -56,12 +56,7 @@ body {
   margin-top: -10px;
   font-size: 10px;
 }
-#print-btn {
-  display: none;
-}
-#save-btn{
-  display: none;
-}
+
 .btn {
   display: block;
   width: 100%;

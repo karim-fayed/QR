@@ -1,20 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>QR Generator for Excel</title>
   <link rel="icon" href="favicon.ico" type="image/x-icon">
   <link rel="stylesheet" href="styles.css">
-  <script
-  src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" integrity="sha512-r22gChDnGvBylk90+2e/ycr3RVrDi8DIOkIGNhJlKfuyQM4tIRAI062MaV8sfjQKYVGjOBaZBOA87z+IhZE9DA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <!-- <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script> -->
-    <!--<script src="https://unpkg.com/@zxing/library@0.18.4"></script> -->  <!-- ZXing library for QR code scanning -->
-
-  <script src="html5-qrcode.min.js"></script>
-  <script src="script2.JS"></script>
+  <!-- Uncomment if using ZXing for QR code scanning -->
+  <script src="https://unpkg.com/@zxing/library@0.18.4"></script> 
+  <!-- Include Html5Qrcode or other QR code scanning library -->
+  <script src="html5-qrcode.min.js"></script> 
+  <script src="qrcode.min.js"></script>
+  <script src="script2.js" defer></script>
   <style>
     body {
       background-image: url('https://k.top4top.io/p_3037sts6b1.png');
@@ -23,7 +22,6 @@
     }
   </style>
 </head>
-
 <body>
   <div class="container">
     <h1 class="title">QR Generator for Excel</h1>
@@ -38,22 +36,21 @@
       </select>
 
       <button type="button" id="generate-btn" class="btn">Generate QR Code</button>
-      <button type="button" id="print-btn" class="btn">Print QR Code</button> 
+      <button type="button" id="print-btn" class="btn">Print QR Code</button>
       <button type="button" id="save-btn" class="btn">Save QR Code</button>
       <button type="button" id="open-camera-btn" class="btn">Open Camera</button>
       <button type="button" id="percentage-calculator-btn" class="btn">Calculate percentage</button>
       <button type="button" id="language-toggle-btn" class="side-button">Switch to English</button>
       <div>
-        <!-- <p>Download the Excel template</p> -->
         <a href="template.xlsx" download="example.xlsx">Download Excel Template</a>
       </div>
     </form>
     <div id="camera-container" style="display: none;">
+      <video id="video" autoplay playsinline style="width: 100%; height: auto;"></video>
       <div id="reader" width="600px"></div>
     </div>
     <div id="result"></div>
     <div class="moving-text">*𝓚𝓐𝓡𝓘𝓜𝓐𝓗𝓜𝓔𝓓*</div>
   </div>
 </body>
-
 </html>

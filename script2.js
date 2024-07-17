@@ -78,10 +78,10 @@ function openCamera() {
                 html5QrCode.start(
                     cameraConfig, // Pass camera configuration object
                     {
-                        fps: 60, // Increase FPS for better scanning sensitivity
+                        fps: 120, // Increase FPS for better scanning sensitivity
                         qrbox: { width: 280, height: 280 },
                         aspectRatio: 1,
-                        zoom: 2 // Increase zoom level for better scanning
+                        zoom: 20 // Increase zoom level for better scanning
                     },
                     qrCodeMessage => {
                         // Check if scanning is still active

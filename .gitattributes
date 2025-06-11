@@ -1,0 +1,9 @@
+# Ensure proper file type detection
+*.vercelignore text eol=lf
+.vercelignore text eol=lf
+*.gitignore text eol=lf
+*.md text eol=lf
+*.tsx text eol=lf
+*.ts text eol=lf
+*.js text eol=lf
+*.json text eol=lf

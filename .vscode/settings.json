@@ -1,5 +1,20 @@
 {
     "IDX.aI.enableInlineCompletion": true,
     "IDX.aI.enableCodebaseIndexing": true,
-    "java.configuration.updateBuildConfiguration": "automatic"
+    "java.configuration.updateBuildConfiguration": "interactive",
+    "java.project.sourcePaths": [],
+    "java.project.referencedLibraries": [],
+    "files.exclude": {
+        "**/QRVerifyApp/android": true,
+        "**/QRVerifyApp/ios": true,
+        "**/QRVerifyApp/gradle": true
+    },
+    "search.exclude": {
+        "**/QRVerifyApp/android": true,
+        "**/QRVerifyApp/ios": true,
+        "**/QRVerifyApp/gradle": true,
+        "**/QRVerifyApp/node_modules": true
+    },
+    "typescript.preferences.excludePackageJsonAutoImports": "on",
+    "typescript.preferences.includePackageJsonAutoImports": "off"
 }

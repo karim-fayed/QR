@@ -7,6 +7,10 @@ QRVerifyApp/**
 node_modules/
 .git/
 .gitmodules
+.gitignore
+.vercelignore
+.npmrc
+
 
 # Exclude development files
 *.log

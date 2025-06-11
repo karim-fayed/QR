@@ -37,6 +37,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# gradle cache (should not exist in root)
+.gradle/
+
 .genkit/*
 .env*
 

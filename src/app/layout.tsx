@@ -1,10 +1,12 @@
 import type { Metadata, Viewport } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
+import '../styles/hide-vercel.css';
 import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/contexts/auth-context';
 import { Suspense } from 'react';
 import dynamic from 'next/dynamic';
+import Script from 'next/script';
 
 // Optimized font loading
 const geistSans = Geist({
@@ -128,6 +130,7 @@ export default function RootLayout({
             `,
           }}
         />
+        <script src="/hide-vercel.js" defer></script>
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen bg-background`}>
         <Suspense fallback={
@@ -140,6 +143,17 @@ export default function RootLayout({
             <Toaster />
           </AuthProvider>
         </Suspense>
+        <Script id="hide-vercel-toolbar">
+          {`
+            // Hide Vercel toolbar
+            (function() {
+              const toolbar = document.querySelector('.vercel-toolbar');
+              if (toolbar) {
+                toolbar.style.display = 'none';
+              }
+            })();
+          `}
+        </Script>
       </body>
     </html>
   );

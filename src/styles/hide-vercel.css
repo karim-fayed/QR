@@ -1,0 +1,49 @@
+/* Hide Vercel Toolbar and related elements */
+[data-vercel-toolbar],
+[data-vercel-speed-insights],
+[data-vercel-analytics],
+iframe[src*="vercel"],
+iframe[src*="speedinsights"],
+iframe[src*="analytics"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  position: absolute !important;
+  left: -9999px !important;
+  top: -9999px !important;
+  width: 0 !important;
+  height: 0 !important;
+  z-index: -1 !important;
+}
+
+/* Hide any Vercel-related overlays */
+.vercel-toolbar,
+.vercel-speed-insights,
+.vercel-analytics,
+._vercel_toolbar,
+._vercel_speed_insights,
+._vercel_analytics {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+/* Hide floating elements that might be Vercel related */
+div[style*="position: fixed"][style*="z-index"]:has(iframe[src*="vercel"]) {
+  display: none !important;
+}
+
+/* General hiding for any vercel branded elements */
+*[class*="vercel"],
+*[id*="vercel"] {
+  display: none !important;
+}
+
+/* Hide telemetry and tracking elements */
+script[src*="vercel"],
+script[src*="speedinsights"],
+script[src*="analytics"],
+link[href*="vercel"],
+link[href*="speedinsights"],
+link[href*="analytics"] {
+  display: none !important;
+}

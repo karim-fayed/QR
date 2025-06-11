@@ -25,6 +25,17 @@ const nextConfig: NextConfig = {
     },
   } : {}),
   
+  // Disable Vercel toolbar and speed insights in production
+  productionBrowserSourceMaps: false,
+  
+  // Environment variables to disable Vercel features
+  env: {
+    VERCEL_ANALYTICS_ID: '',
+    VERCEL_SPEED_INSIGHTS_ID: '',
+    NEXT_TELEMETRY_DISABLED: '1',
+    DISABLE_VERCEL_TOOLBAR: '1',
+  },
+  
   // Image optimizations
   images: {
     remotePatterns: [
@@ -78,6 +89,25 @@ const nextConfig: NextConfig = {
     };
     
     return config;
+  },
+  
+  // Headers to disable Vercel features
+  headers: async () => {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'X-Vercel-Speed-Insights',
+            value: 'disabled',
+          },
+          {
+            key: 'X-Vercel-Analytics',
+            value: 'disabled',
+          },
+        ],
+      },
+    ];
   },
 };
 

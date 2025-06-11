@@ -43,3 +43,21 @@ next-env.d.ts
 # firebase
 firebase-debug.log
 firestore-debug.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+dist/
+tmp/
+
+# Gradle (for React Native)
+.gradle/
+build/

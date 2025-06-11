@@ -50,6 +50,26 @@ const nextConfig: NextConfig = {
       };
     }
     
+    // Fix handlebars require.extensions warning
+    config.module.rules.push({
+      test: /\.m?js$/,
+      resolve: {
+        fullySpecified: false,
+      },
+    });
+    
+    // Ignore handlebars dynamic require warnings
+    config.ignoreWarnings = [
+      ...(config.ignoreWarnings || []),
+      {
+        module: /node_modules\/handlebars/,
+        message: /require\.extensions/,
+      },
+      {
+        module: /node_modules\/@opentelemetry/,
+      },
+    ];
+    
     // Tree shaking optimizations
     config.optimization = {
       ...config.optimization,

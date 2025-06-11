@@ -6,7 +6,6 @@ import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/contexts/auth-context';
 import { Suspense } from 'react';
 import dynamic from 'next/dynamic';
-import Script from 'next/script';
 
 // Optimized font loading
 const geistSans = Geist({
@@ -143,17 +142,6 @@ export default function RootLayout({
             <Toaster />
           </AuthProvider>
         </Suspense>
-        <Script id="hide-vercel-toolbar">
-          {`
-            // Hide Vercel toolbar
-            (function() {
-              const toolbar = document.querySelector('.vercel-toolbar');
-              if (toolbar) {
-                toolbar.style.display = 'none';
-              }
-            })();
-          `}
-        </Script>
       </body>
     </html>
   );

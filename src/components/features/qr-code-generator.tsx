@@ -251,7 +251,7 @@ export function QrCodeGenerator({ userId }: QrCodeGeneratorProps) {
         setAnalysisResult(null);
         formAction(formData);
       }} 
-      className="grid md:grid-cols-2 gap-8 items-start"
+      className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-start"
     >
        {/* Hidden inputs to pass all necessary data if SubmitButtonWrapper doesn't handle it */}
       <input type="hidden" name="destinationUrl" value={destinationUrlOrText} />
@@ -259,7 +259,7 @@ export function QrCodeGenerator({ userId }: QrCodeGeneratorProps) {
       <input type="hidden" name="qrName" value={qrName} />
       {userId && <input type="hidden" name="userId" value={userId} />}
 
-      <div className="space-y-6">
+      <div className="space-y-4 lg:space-y-6">
         {isLimitReached && (
           <Alert variant="destructive">
             <AlertTitle>Monthly Limit Reached</AlertTitle>
@@ -286,15 +286,15 @@ export function QrCodeGenerator({ userId }: QrCodeGeneratorProps) {
 
       <Card className="shadow-lg">
         <CardHeader>
-          <CardTitle className="flex items-center text-2xl">
-            <FileInput className="mr-2 h-6 w-6 text-primary" /> QR Code Details
+          <CardTitle className="flex items-center text-xl lg:text-2xl">
+            <FileInput className="mr-2 h-5 w-5 lg:h-6 lg:w-6 text-primary" /> QR Code Details
           </CardTitle>
           <CardDescription>
             Enter the necessary information to generate your secure QR code.
             {userId && " This QR code will be saved to your account."}
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-6">
+        <CardContent className="space-y-4 lg:space-y-6">
           <div className="space-y-2">
             <Label htmlFor="qrNameInput">QR Code Name {userId ? "(Required)" : "(Optional)"}</Label>
             <Input
@@ -375,23 +375,23 @@ export function QrCodeGenerator({ userId }: QrCodeGeneratorProps) {
         </CardFooter>
       </Card>
 
-      <Card className="shadow-lg sticky top-24">
+      <Card className="shadow-lg lg:sticky lg:top-6 h-fit">
         <CardHeader>
-          <CardTitle className="flex items-center text-2xl">
-            <Palette className="mr-2 h-6 w-6 text-primary" /> Preview & Options
+          <CardTitle className="flex items-center text-xl lg:text-2xl">
+            <Palette className="mr-2 h-5 w-5 lg:h-6 lg:w-6 text-primary" /> Preview & Options
           </CardTitle>
            <CardDescription>Your generated QR code and customization settings.</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-6">
+        <CardContent className="space-y-4 lg:space-y-6">
           {generatedQrCodeDataUrl ? (
             <div className="flex flex-col items-center justify-center p-4 border rounded-lg bg-muted/10">
               <Image
                 src={generatedQrCodeDataUrl}
                 alt="Generated QR Code"
                 data-ai-hint="qr code"
-                width={200}
-                height={200}
-                className="rounded-md shadow-md"
+                width={250}
+                height={250}
+                className="rounded-md shadow-md w-full max-w-[250px] h-auto"
               />
               {generatedShortId && (
                 <div className="mt-3 p-2 border rounded-md bg-muted/30 w-full text-center">
@@ -428,13 +428,13 @@ export function QrCodeGenerator({ userId }: QrCodeGeneratorProps) {
           )}
 
           <Tabs defaultValue="appearance">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="appearance">Appearance</TabsTrigger>
-              <TabsTrigger value="advanced">Advanced</TabsTrigger>
-              <TabsTrigger value="analysis">Analysis</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-3 h-auto">
+              <TabsTrigger value="appearance" className="text-xs sm:text-sm">Appearance</TabsTrigger>
+              <TabsTrigger value="advanced" className="text-xs sm:text-sm">Advanced</TabsTrigger>
+              <TabsTrigger value="analysis" className="text-xs sm:text-sm">Analysis</TabsTrigger>
             </TabsList>
-            <TabsContent value="appearance" className="pt-4">
-              <div className="space-y-4">
+            <TabsContent value="appearance" className="pt-3 lg:pt-4">
+              <div className="space-y-3 lg:space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="logoUrlInput">Logo URL (Optional)</Label>
                   <Input 
@@ -449,8 +449,8 @@ export function QrCodeGenerator({ userId }: QrCodeGeneratorProps) {
                 </div>
               </div>
             </TabsContent>
-            <TabsContent value="advanced" className="pt-4">
-              <div className="space-y-4">
+            <TabsContent value="advanced" className="pt-3 lg:pt-4">
+              <div className="space-y-3 lg:space-y-4">
                 <div className="flex items-center justify-between p-3 border rounded-md">
                   <Label htmlFor="singleUseSwitch" className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-primary" /> Single Use QR</Label>
                   <Switch id="singleUseSwitch" name="singleUse" />
@@ -458,7 +458,7 @@ export function QrCodeGenerator({ userId }: QrCodeGeneratorProps) {
                  <p className="text-xs text-muted-foreground pl-3">Feature coming soon.</p>
               </div>
             </TabsContent>
-            <TabsContent value="analysis" className="pt-4">
+            <TabsContent value="analysis" className="pt-3 lg:pt-4">
               {analysisResult && currentDataTypeProcessed === 'url' ? (
                 <Card className={`border-2 ${getAnalysisResultColor(analysisResult.suggestedAction)} bg-muted/10`}>
                   <CardHeader className="pb-2">
@@ -500,7 +500,7 @@ export function QrCodeGenerator({ userId }: QrCodeGeneratorProps) {
           </Tabs>
           
         </CardContent>
-        <CardFooter className="flex flex-col sm:flex-row gap-2 pt-6">
+        <CardFooter className="flex flex-col gap-3 sm:flex-row sm:gap-2 pt-4 lg:pt-6">
           <Button 
             type="button" // Important: prevent form submission
             variant="outline" 

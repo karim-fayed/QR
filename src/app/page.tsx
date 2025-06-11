@@ -9,15 +9,20 @@ import { Suspense } from 'react';
 // Lazy load the QR Code Generator for better performance
 const QrCodeGenerator = dynamic(() => import('@/components/features/qr-code-generator').then(mod => ({ default: mod.QrCodeGenerator })), {
   loading: () => (
-    <div className="grid md:grid-cols-2 gap-8 items-start">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-start">
       <div className="space-y-6 animate-pulse">
-        <div className="h-32 bg-muted rounded-lg"></div>
-        <div className="h-10 bg-muted rounded-md"></div>
-        <div className="h-10 bg-muted rounded-md"></div>
+        <div className="h-40 bg-muted rounded-lg"></div>
+        <div className="h-12 bg-muted rounded-md"></div>
+        <div className="h-12 bg-muted rounded-md"></div>
+        <div className="h-16 bg-muted rounded-md"></div>
       </div>
-      <div className="rounded-lg border bg-card p-6 animate-pulse">
+      <div className="rounded-lg border bg-card p-6 animate-pulse h-fit lg:sticky lg:top-6">
+        <div className="h-8 bg-muted rounded-md mb-4"></div>
         <div className="h-64 bg-muted rounded-lg mb-4"></div>
-        <div className="h-8 bg-muted rounded-md"></div>
+        <div className="space-y-3">
+          <div className="h-10 bg-muted rounded-md"></div>
+          <div className="h-10 bg-muted rounded-md"></div>
+        </div>
       </div>
     </div>
   ),

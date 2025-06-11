@@ -1,16 +1,28 @@
+# QR Code Verification System - Optimized Robots.txt
 User-agent: *
 Allow: /
 
-# Optimize crawling
-Allow: /api/sitemap
+# Allow main content areas for better SEO
+Allow: /generator
+Allow: /scanner
+Allow: /dashboard
+Allow: /api/public/*
 Allow: /sitemap.xml
 Allow: /manifest.json
 
-# Block unnecessary paths
+# Block private/admin areas and technical paths
 Disallow: /api/
 Disallow: /_next/
 Disallow: /admin/
-Disallow: /dashboard/
+Disallow: /private/
+Disallow: /sw.js
+Disallow: /.well-known/
 
 # Sitemap location
 Sitemap: https://qr-safe.vercel.app/sitemap.xml
+
+# Crawl optimization
+Crawl-delay: 1
+
+# Cache directive for better performance
+Cache-Control: public, max-age=86400

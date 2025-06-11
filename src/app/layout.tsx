@@ -5,12 +5,15 @@ import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/contexts/auth-context';
 import { Suspense } from 'react';
+import dynamic from 'next/dynamic';
 
+// Optimized font loading
 const geistSans = Geist({
   variable: '--font-geist-sans',
   subsets: ['latin'],
   display: 'swap',
   preload: true,
+  fallback: ['system-ui', 'arial'],
 });
 
 const geistMono = Geist_Mono({
@@ -18,15 +21,28 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
   display: 'swap',
   preload: false, // Load only when needed
+  fallback: ['Courier New', 'monospace'],
+});
+
+// Lazy load performance optimizer
+const PerformanceOptimizer = dynamic(() => import('@/components/performance/PerformanceOptimizer'), {
+  ssr: false,
 });
 
 export const metadata: Metadata = {
-  title: 'CodeSafe QR - Secure QR Code Platform',
-  description: 'Create, manage, and verify encrypted QR codes with advanced security features.',
-  keywords: ['QR codes', 'security', 'encryption', 'verification', 'AI analysis'],
+  title: {
+    default: 'CodeSafe QR - Secure QR Code Platform',
+    template: '%s | CodeSafe QR',
+  },
+  description: 'Create, manage, and verify encrypted QR codes with advanced security features and AI analysis.',
+  keywords: ['QR codes', 'security', 'encryption', 'verification', 'AI analysis', 'tamper-proof', 'secure'],
   authors: [{ name: 'CodeSafe Team' }],
   creator: 'CodeSafe',
   publisher: 'CodeSafe',
+  metadataBase: new URL('https://qr-safe.vercel.app'),
+  alternates: {
+    canonical: '/',
+  },
   robots: {
     index: true,
     follow: true,

@@ -12,13 +12,9 @@ import { decryptAndVerifyQrData, type VerifyQrResult } from '@/app/actions';
 import { useToast } from '@/hooks/use-toast';
 import { Header } from '@/components/global/header';
 import { debounce } from '@/lib/performance';
+import jsQR from 'jsqr';
 
 // Lazy load heavy components
-const jsQR = dynamic(() => import('jsqr'), {
-  loading: () => <div>Loading QR scanner...</div>,
-  ssr: false,
-});
-
 const Textarea = dynamic(() => import('@/components/ui/textarea').then(mod => ({ default: mod.Textarea })), {
   loading: () => <div className="h-20 bg-muted animate-pulse rounded-md" />,
 });
@@ -163,7 +159,7 @@ export default function VerifyQrPage() {
                 inversionAttempts: "attemptBoth",
               });
               if (code && code.data) {
-                playBeep();
+                AudioManager.getInstance().playBeep();
                 if (navigator.vibrate) navigator.vibrate(100);
                 submitQrDataForVerification(code.data);
               } else {
@@ -243,7 +239,7 @@ export default function VerifyQrPage() {
       inversionAttempts: "attemptBoth",
     });
     if (code && code.data) {
-      playBeep();
+      AudioManager.getInstance().playBeep();
       if (navigator.vibrate) navigator.vibrate(100);
       submitQrDataForVerification(code.data);
       stopCameraScan();
@@ -304,10 +300,7 @@ export default function VerifyQrPage() {
   useEffect(() => {
     return () => {
       stopCameraScan();
-      if (audioContext && audioContext.state !== 'closed') {
-        audioContext.close().catch(e => console.error("Error closing AudioContext:", e));
-        audioContext = null;
-      }
+      // AudioManager handles its own cleanup
     };
   }, [stopCameraScan]);
 

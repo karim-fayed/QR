@@ -173,7 +173,7 @@ export async function analyzeUrl(prevState: any, formData: FormData): Promise<Qr
       return {
         message: 'Validation failed for URL.',
         error: 'Invalid URL format.',
-        fieldErrors: { destinationUrl: urlCheck.error.flatten().fieldErrors._errors },
+        fieldErrors: { destinationUrl: urlCheck.error.flatten().formErrors },
         dataTypeProcessed: dataType,
         originalContent: destinationUrl,
       };
@@ -303,7 +303,7 @@ export async function createAndSaveQrCode(prevState: any, formData: FormData): P
       return {
         message: 'Validation failed for URL.',
         error: 'Invalid URL format.',
-        fieldErrors: { destinationUrl: urlCheck.error.flatten().fieldErrors._errors },
+        fieldErrors: { destinationUrl: urlCheck.error.flatten().formErrors },
         dataTypeProcessed: dataType,
         originalContent: destinationUrl,
       };

@@ -29,18 +29,11 @@ export function throttle<T extends (...args: any[]) => void>(
   };
 }
 
-// Lazy load component wrapper
-export function createLazyComponent<T>(
-  importFunc: () => Promise<{ default: React.ComponentType<T> }>,
-  fallback?: React.ComponentType
+// Lazy load component wrapper - simplified for TypeScript
+export function createLazyComponent<T extends Record<string, any>>(
+  importFunc: () => Promise<{ default: React.ComponentType<T> }>
 ) {
-  const LazyComponent = React.lazy(importFunc);
-  
-  return (props: T) => (
-    <React.Suspense fallback={fallback ? React.createElement(fallback) : <div>Loading...</div>}>
-      <LazyComponent {...props} />
-    </React.Suspense>
-  );
+  return React.lazy(importFunc);
 }
 
 // Image optimization
@@ -108,34 +101,38 @@ export function monitorMemoryUsage() {
 // Performance observer for Core Web Vitals
 export function observePerformance() {
   if (typeof window !== 'undefined' && 'PerformanceObserver' in window) {
-    // Largest Contentful Paint
-    const lcpObserver = new PerformanceObserver((list) => {
-      const entries = list.getEntries();
-      const lastEntry = entries[entries.length - 1];
-      console.log('LCP:', lastEntry.startTime);
-    });
-    lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] });
-
-    // First Input Delay
-    const fidObserver = new PerformanceObserver((list) => {
-      const entries = list.getEntries();
-      entries.forEach((entry) => {
-        console.log('FID:', entry.processingStart - entry.startTime);
+    try {
+      // Largest Contentful Paint
+      const lcpObserver = new PerformanceObserver((list) => {
+        const entries = list.getEntries();
+        const lastEntry = entries[entries.length - 1];
+        console.log('LCP:', lastEntry.startTime);
       });
-    });
-    fidObserver.observe({ entryTypes: ['first-input'] });
+      lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] });
 
-    // Cumulative Layout Shift
-    const clsObserver = new PerformanceObserver((list) => {
-      let clsValue = 0;
-      const entries = list.getEntries();
-      entries.forEach((entry) => {
-        if (!(entry as any).hadRecentInput) {
-          clsValue += (entry as any).value;
-        }
+      // First Input Delay
+      const fidObserver = new PerformanceObserver((list) => {
+        const entries = list.getEntries();
+        entries.forEach((entry: any) => {
+          console.log('FID:', entry.processingStart - entry.startTime);
+        });
       });
-      console.log('CLS:', clsValue);
-    });
-    clsObserver.observe({ entryTypes: ['layout-shift'] });
+      fidObserver.observe({ entryTypes: ['first-input'] });
+
+      // Cumulative Layout Shift
+      const clsObserver = new PerformanceObserver((list) => {
+        let clsValue = 0;
+        const entries = list.getEntries();
+        entries.forEach((entry: any) => {
+          if (!entry.hadRecentInput) {
+            clsValue += entry.value;
+          }
+        });
+        console.log('CLS:', clsValue);
+      });
+      clsObserver.observe({ entryTypes: ['layout-shift'] });
+    } catch (error) {
+      console.log('Performance observation not supported:', error);
+    }
   }
 }

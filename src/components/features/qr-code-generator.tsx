@@ -1,23 +1,31 @@
 'use client';
 
-import { useState, useEffect, useActionState, ReactNode } from 'react';
+import { useState, useEffect, useActionState, ReactNode, useCallback, useMemo } from 'react';
 import { useFormStatus } from 'react-dom';
-import Image from 'next/image';
+import dynamic from 'next/dynamic';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { QrCode, Upload, FileImage, FileText, ShieldCheck, ShieldAlert, ShieldX, Info, Palette, CheckCircle, AlertCircle, XCircle, Loader2, Settings2, Clock, MapPin, Hash, Fingerprint, Type, FileInput, Tags } from 'lucide-react';
+import { QrCode, FileImage, FileText, ShieldCheck, ShieldAlert, ShieldX, Info, Palette, CheckCircle, AlertCircle, XCircle, Loader2, Type, FileInput } from 'lucide-react';
 import { analyzeUrl, createAndSaveQrCode, type QrGenerationResult } from '@/app/actions';
 import type { AnalyzeQrDestinationOutput } from '@/ai/flows/analyze-qr-destination';
 import { useToast } from '@/hooks/use-toast';
-import { Switch } from '@/components/ui/switch';
 import { useAuth } from '@/contexts/auth-context';
 import Link from 'next/link';
+import { debounce } from '@/lib/performance';
+
+// Lazy load heavy components
+const Image = dynamic(() => import('next/image'), {
+  loading: () => <div className="w-full h-64 bg-muted animate-pulse rounded-lg" />,
+});
+
+const Textarea = dynamic(() => import('@/components/ui/textarea').then(mod => ({ default: mod.Textarea })), {
+  loading: () => <div className="h-20 bg-muted animate-pulse rounded-md" />,
+});
 
 const initialGeneratorState: QrGenerationResult = {
   message: '',

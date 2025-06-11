@@ -1,0 +1,16 @@
+User-agent: *
+Allow: /
+
+# Optimize crawling
+Allow: /api/sitemap
+Allow: /sitemap.xml
+Allow: /manifest.json
+
+# Block unnecessary paths
+Disallow: /api/
+Disallow: /_next/
+Disallow: /admin/
+Disallow: /dashboard/
+
+# Sitemap location
+Sitemap: https://qr-safe.vercel.app/sitemap.xml

@@ -1,52 +1,85 @@
-// 'use client';
 'use client';
 
-import { useState, useRef, useEffect, useActionState, startTransition, useCallback } from 'react';
-import jsQR from 'jsqr';
+import { useState, useRef, useEffect, useActionState, startTransition, useCallback, useMemo } from 'react';
+import dynamic from 'next/dynamic';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Upload, Camera, CheckCircle, XCircle, Loader2, AlertCircle, ScanLine, FileText, ImageUp, Tags, Search, ClipboardPaste, ShieldCheck } from 'lucide-react';
 import { decryptAndVerifyQrData, type VerifyQrResult } from '@/app/actions';
 import { useToast } from '@/hooks/use-toast';
 import { Header } from '@/components/global/header';
+import { debounce } from '@/lib/performance';
+
+// Lazy load heavy components
+const jsQR = dynamic(() => import('jsqr'), {
+  loading: () => <div>Loading QR scanner...</div>,
+  ssr: false,
+});
+
+const Textarea = dynamic(() => import('@/components/ui/textarea').then(mod => ({ default: mod.Textarea })), {
+  loading: () => <div className="h-20 bg-muted animate-pulse rounded-md" />,
+});
 
 const initialState: VerifyQrResult = {
   success: false,
   message: '',
 };
 
-let audioContext: AudioContext | null = null;
-const getAudioContext = () => {
-  if (typeof window !== 'undefined') {
-    if (!audioContext || audioContext.state === 'closed') {
-      audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
-    }
-  }
-  return audioContext;
-};
+// Optimized audio context management
+class AudioManager {
+  private static instance: AudioManager;
+  private audioContext: AudioContext | null = null;
 
-const playBeep = () => {
-  const context = getAudioContext();
-  if (context && context.state === 'running') {
-    try {
-      const oscillator = context.createOscillator();
-      const gainNode = context.createGain();
-      oscillator.connect(gainNode);
-      gainNode.connect(context.destination);
-      oscillator.type = 'sine';
-      oscillator.frequency.setValueAtTime(880, context.currentTime); 
-      gainNode.gain.setValueAtTime(0.1, context.currentTime); 
-      oscillator.start();
-      oscillator.stop(context.currentTime + 0.1);
-    } catch (e) {
-      console.error("Error playing beep:", e);
+  public static getInstance(): AudioManager {
+    if (!AudioManager.instance) {
+      AudioManager.instance = new AudioManager();
+    }
+    return AudioManager.instance;
+  }
+
+  private getAudioContext(): AudioContext | null {
+    if (typeof window !== 'undefined') {
+      if (!this.audioContext || this.audioContext.state === 'closed') {
+        this.audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+      }
+    }
+    return this.audioContext;
+  }
+
+  public playBeep(): void {
+    const context = this.getAudioContext();
+    if (context && context.state === 'running') {
+      try {
+        const oscillator = context.createOscillator();
+        const gainNode = context.createGain();
+        oscillator.connect(gainNode);
+        gainNode.connect(context.destination);
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(880, context.currentTime);
+        gainNode.gain.setValueAtTime(0.1, context.currentTime);
+        oscillator.start();
+        oscillator.stop(context.currentTime + 0.1);
+      } catch (e) {
+        console.error("Error playing beep:", e);
+      }
     }
   }
-};
+
+  public suspend(): void {
+    if (this.audioContext && this.audioContext.state === 'running') {
+      this.audioContext.suspend();
+    }
+  }
+
+  public resume(): void {
+    if (this.audioContext && this.audioContext.state === 'suspended') {
+      this.audioContext.resume();
+    }
+  }
+}
 
 export default function VerifyQrPage() {
   const [state, formAction, isPending] = useActionState(decryptAndVerifyQrData, initialState);

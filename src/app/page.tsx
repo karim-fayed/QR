@@ -1,9 +1,28 @@
 
 import { Header } from '@/components/global/header';
-import { QrCodeGenerator } from '@/components/features/qr-code-generator';
 import { Separator } from '@/components/ui/separator';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Info } from 'lucide-react';
+import dynamic from 'next/dynamic';
+import { Suspense } from 'react';
+
+// Lazy load the QR Code Generator for better performance
+const QrCodeGenerator = dynamic(() => import('@/components/features/qr-code-generator').then(mod => ({ default: mod.QrCodeGenerator })), {
+  loading: () => (
+    <div className="grid md:grid-cols-2 gap-8 items-start">
+      <div className="space-y-6 animate-pulse">
+        <div className="h-32 bg-muted rounded-lg"></div>
+        <div className="h-10 bg-muted rounded-md"></div>
+        <div className="h-10 bg-muted rounded-md"></div>
+      </div>
+      <div className="rounded-lg border bg-card p-6 animate-pulse">
+        <div className="h-64 bg-muted rounded-lg mb-4"></div>
+        <div className="h-8 bg-muted rounded-md"></div>
+      </div>
+    </div>
+  ),
+  ssr: false
+});
 
 export default function HomePage() {
   // Freemium Model Placeholder: Determine if ads should be shown
@@ -34,7 +53,9 @@ export default function HomePage() {
         
         <Separator className="my-8" />
 
-        <QrCodeGenerator /> {/* Public generator, does not save to DB */}
+        <Suspense fallback={<div className="text-center py-8">Loading QR Generator...</div>}>
+          <QrCodeGenerator /> {/* Public generator, does not save to DB */}
+        </Suspense>
         
       </main>
       <footer className="py-6 text-center text-muted-foreground text-sm border-t">

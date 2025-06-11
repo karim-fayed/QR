@@ -4,12 +4,22 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p 9002",
+    "dev:turbo": "next dev --turbo -p 9002",
     "genkit:dev": "genkit start -- tsx src/ai/dev.ts",
     "genkit:watch": "genkit start -- tsx --watch src/ai/dev.ts",
     "build": "next build",
+    "build:analyze": "ANALYZE=true next build",
     "start": "next start",
+    "start:prod": "next start -p 3000",
     "lint": "next lint",
-    "typecheck": "tsc --noEmit"
+    "lint:fix": "next lint --fix",
+    "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "clean": "rm -rf .next out node_modules/.cache",
+    "precommit": "npm run lint && npm run typecheck",
+    "analyze": "npm run build:analyze && npx @next/bundle-analyzer .next",
+    "perf": "npm run build && npm run start & npx lighthouse http://localhost:3000 --output=html --output-path=./lighthouse-report.html"
   },
   "dependencies": {
     "@genkit-ai/googleai": "^1.8.0",

@@ -21,7 +21,6 @@ const QrCodeGenerator = dynamic(() => import('@/components/features/qr-code-gene
       </div>
     </div>
   ),
-  ssr: false
 });
 
 export default function HomePage() {

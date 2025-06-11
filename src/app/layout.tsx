@@ -26,7 +26,7 @@ const geistMono = Geist_Mono({
 
 // Lazy load performance optimizer
 const PerformanceOptimizer = dynamic(() => import('@/components/performance/PerformanceOptimizer'), {
-  ssr: false,
+  loading: () => null,
 });
 
 export const metadata: Metadata = {

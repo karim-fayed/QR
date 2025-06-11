@@ -17,6 +17,14 @@ const nextConfig: NextConfig = {
   compress: true,
   poweredByHeader: false,
   
+  // Vercel-specific optimizations
+  ...(process.env.VERCEL ? {
+    output: 'standalone',
+    generateBuildId: async () => {
+      return process.env.VERCEL_GIT_COMMIT_SHA || 'local-build';
+    },
+  } : {}),
+  
   // Image optimizations
   images: {
     remotePatterns: [
